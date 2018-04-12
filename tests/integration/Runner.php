@@ -9,22 +9,18 @@ class Runner
     private $logger;
     private $tests;
     private $namespace;
-
     public function __construct($samplesDir, $testsDir, $testNamespace)
     {
         $this->samplesDir = $samplesDir;
         $this->testsDir = $testsDir;
         $this->namespace = $testNamespace;
-
         $this->logger = new DefaultLogger();
         $this->assembleTestFiles();
     }
-
-    private function traverse(string $path): \DirectoryIterator
+    private function traverse($path)
     {
         return new \DirectoryIterator($path);
     }
-
     private function assembleTestFiles()
     {
         foreach ($this->traverse($this->testsDir) as $servicePath) {
@@ -44,12 +40,10 @@ class Runner
             }
         }
     }
-
     private function getOpts()
     {
         $opts = getopt('s:v:m:t:', ['service:', 'version:', 'module::', 'test::', 'debug::', 'help::']);
-
-        $getOpt = function (array $keys, $default) use ($opts) {
+        $getOpt = function (array $keys, $default) use($opts) {
             $value = $default;
             foreach ($keys as $key) {
                 if (isset($opts[$key])) {
@@ -59,35 +53,23 @@ class Runner
             }
             return strtolower($value);
         };
-
-        return [
-            $getOpt(['s', 'service'], 'all'),
-            $getOpt(['v', 'version'], 'all'),
-            $getOpt(['m', 'module'], 'core'),
-            $getOpt(['t', 'test'], ''),
-            isset($opts['debug']) ? (int)$opts['debug'] : 0,
-        ];
+        return [$getOpt(['s', 'service'], 'all'), $getOpt(['v', 'version'], 'all'), $getOpt(['m', 'module'], 'core'), $getOpt(['t', 'test'], ''), isset($opts['debug']) ? (int) $opts['debug'] : 0];
     }
-
     private function getRunnableServices($service, $version, $module)
     {
         $tests = $this->tests;
-
         if ($service != 'all') {
             if (!isset($tests[$service])) {
                 $this->logger->critical(sprintf("%s is not a valid service", $service));
                 exit(1);
             }
-
             $serviceArray = $tests[$service];
             $tests = [$service => $serviceArray];
-
             if ($version != 'all') {
                 if (!isset($serviceArray[$version])) {
                     $this->logger->critical(sprintf("%s is not a valid version for the %s service", $version, $service));
                     exit(1);
                 }
-
                 $versionArray = $serviceArray[$version];
                 if ($module != 'core') {
                     if (!in_array($module, $serviceArray[$version])) {
@@ -96,53 +78,38 @@ class Runner
                     }
                     $versionArray = [$module];
                 }
-
                 $tests = [$service => [$version => $versionArray]];
             }
         }
-
         return $tests;
     }
-
     /**
      * @return TestInterface
      */
     private function getTest($service, $version, $test, $verbosity)
     {
         $className = sprintf("%s\\%s\\%s\\%sTest", $this->namespace, Utils::toCamelCase($service), $version, ucfirst($test));
-
         if (!class_exists($className)) {
             throw new \RuntimeException(sprintf("%s does not exist", $className));
         }
-
         $basePath = $this->samplesDir . DIRECTORY_SEPARATOR . $service . DIRECTORY_SEPARATOR . $version;
-        $smClass  = sprintf("%s\\SampleManager", $this->namespace);
+        $smClass = sprintf("%s\\SampleManager", $this->namespace);
         $class = new $className($this->logger, new $smClass($basePath, $verbosity), $verbosity);
-
-        if (!($class instanceof TestInterface)) {
+        if (!$class instanceof TestInterface) {
             throw new \RuntimeException(sprintf("%s does not implement TestInterface", $className));
         }
-
         return $class;
     }
-
     public function runServices()
     {
         list($serviceOpt, $versionOpt, $moduleOpt, $testMethodOpt, $verbosityOpt) = $this->getOpts();
-
         foreach ($this->getRunnableServices($serviceOpt, $versionOpt, $moduleOpt) as $serviceName => $serviceArray) {
             foreach ($serviceArray as $versionName => $versionArray) {
                 foreach ($versionArray as $testName) {
                     $this->logger->info(str_repeat('=', 49));
-                    $this->logger->info("Starting %s %v %m integration test(s)", [
-                        '%s' => $serviceName,
-                        '%v' => $versionName,
-                        '%m' => $moduleOpt,
-                    ]);
+                    $this->logger->info("Starting %s %v %m integration test(s)", ['%s' => $serviceName, '%v' => $versionName, '%m' => $moduleOpt]);
                     $this->logger->info(str_repeat('=', 49));
-
                     $testRunner = $this->getTest($serviceName, $versionName, $testName, $verbosityOpt);
-
                     try {
                         if ($testMethodOpt) {
                             $testRunner->runOneTest($testMethodOpt);
