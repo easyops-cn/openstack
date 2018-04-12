@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Identity\v3\Models;
 
 use OpenStack\Common\Resource\OperatorResource;
@@ -8,6 +10,7 @@ use OpenStack\Common\Resource\Deletable;
 use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
+
 /**
  * @property \OpenStack\Identity\v3\Api $api
  */
@@ -15,23 +18,36 @@ class User extends OperatorResource implements Creatable, Listable, Retrievable,
 {
     /** @var string */
     public $domainId;
+
     /** @var string */
     public $defaultProjectId;
+
     /** @var string */
     public $id;
+
     /** @var string */
     public $email;
+
     /** @var bool */
     public $enabled;
+
     /** @var string */
     public $description;
+
     /** @var array */
     public $links;
+
     /** @var string */
     public $name;
-    protected $aliases = ['domain_id' => 'domainId', 'default_project_id' => 'defaultProjectId'];
-    protected $resourceKey = 'user';
+
+    protected $aliases = [
+        'domain_id'          => 'domainId',
+        'default_project_id' => 'defaultProjectId',
+    ];
+
+    protected $resourceKey  = 'user';
     protected $resourcesKey = 'users';
+
     /**
      * {@inheritdoc}
      *
@@ -40,8 +56,10 @@ class User extends OperatorResource implements Creatable, Listable, Retrievable,
     public function create(array $data)
     {
         $response = $this->execute($this->api->postUsers(), $data);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -50,6 +68,7 @@ class User extends OperatorResource implements Creatable, Listable, Retrievable,
         $response = $this->execute($this->api->getUser(), ['id' => $this->id]);
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -58,6 +77,7 @@ class User extends OperatorResource implements Creatable, Listable, Retrievable,
         $response = $this->executeWithState($this->api->patchUser());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -65,14 +85,17 @@ class User extends OperatorResource implements Creatable, Listable, Retrievable,
     {
         $this->execute($this->api->deleteUser(), ['id' => $this->id]);
     }
+
     /**
      * @return \Generator
      */
     public function listGroups()
     {
         $options['id'] = $this->id;
+
         return $this->model(Group::class)->enumerate($this->api->getUserGroups(), $options);
     }
+
     /**
      * @return \Generator
      */

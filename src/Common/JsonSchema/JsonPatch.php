@@ -1,19 +1,24 @@
 <?php
 
+
+
 namespace OpenStack\Common\JsonSchema;
 
 class JsonPatch
 {
-    const OP_ADD = 'add';
+    const OP_ADD     = 'add';
     const OP_REPLACE = 'replace';
-    const OP_REMOVE = 'remove';
+    const OP_REMOVE  = 'remove';
+
     public static function diff($src, $dest)
     {
         return (new static())->makeDiff($src, $dest);
     }
+
     public function makeDiff($srcStruct, $desStruct, $path = '')
     {
         $changes = [];
+
         if (is_object($srcStruct)) {
             $changes = $this->handleObject($srcStruct, $desStruct, $path);
         } elseif (is_array($srcStruct)) {
@@ -21,17 +26,21 @@ class JsonPatch
         } elseif ($srcStruct != $desStruct) {
             $changes[] = $this->makePatch(self::OP_REPLACE, $path, $desStruct);
         }
+
         return $changes;
     }
+
     protected function handleArray(array $srcStruct, array $desStruct, $path)
     {
         $changes = [];
+
         if ($diff = $this->arrayDiff($desStruct, $srcStruct)) {
             foreach ($diff as $key => $val) {
                 if (is_object($val)) {
                     $changes = array_merge($changes, $this->makeDiff($srcStruct[$key], $val, $this->path($path, $key)));
                 } else {
-                    $op = array_key_exists($key, $srcStruct) && !in_array($srcStruct[$key], $desStruct, true) ? self::OP_REPLACE : self::OP_ADD;
+                    $op = array_key_exists($key, $srcStruct) && !in_array($srcStruct[$key], $desStruct, true)
+                        ? self::OP_REPLACE : self::OP_ADD;
                     $changes[] = $this->makePatch($op, $this->path($path, $key), $val);
                 }
             }
@@ -42,17 +51,20 @@ class JsonPatch
                 }
             }
         }
+
         return $changes;
     }
+
     protected function handleObject(\stdClass $srcStruct, \stdClass $desStruct, $path)
     {
         $changes = [];
+
         if ($this->shouldPartiallyReplace($srcStruct, $desStruct)) {
             foreach ($desStruct as $key => $val) {
                 if (!property_exists($srcStruct, $key)) {
                     $changes[] = $this->makePatch(self::OP_ADD, $this->path($path, $key), $val);
-                } elseif ($srcStruct->{$key} != $val) {
-                    $changes = array_merge($changes, $this->makeDiff($srcStruct->{$key}, $val, $this->path($path, $key)));
+                } elseif ($srcStruct->$key != $val) {
+                    $changes = array_merge($changes, $this->makeDiff($srcStruct->$key, $val, $this->path($path, $key)));
                 }
             }
         } elseif ($this->shouldPartiallyReplace($desStruct, $srcStruct)) {
@@ -62,31 +74,40 @@ class JsonPatch
                 }
             }
         }
+
         return $changes;
     }
+
     protected function shouldPartiallyReplace(\stdClass $o1, \stdClass $o2)
     {
         // NOTE: count(stdClass) always returns 1
         return count(array_diff_key((array) $o1, (array) $o2)) < 1;
     }
+
     protected function arrayDiff(array $a1, array $a2)
     {
         $result = [];
+
         foreach ($a1 as $key => $val) {
             if (!in_array($val, $a2, true)) {
                 $result[$key] = $val;
             }
         }
+
         return $result;
     }
+
     protected function path($root, $path)
     {
         $path = (string) $path;
+
         if ('_empty_' === $path) {
             $path = '';
         }
-        return rtrim($root, '/') . '/' . ltrim($path, '/');
+
+        return rtrim($root, '/').'/'.ltrim($path, '/');
     }
+
     protected function makePatch($op, $path, $val = null)
     {
         switch ($op) {

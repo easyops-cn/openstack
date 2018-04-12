@@ -1,11 +1,14 @@
 <?php
 
+
+
 namespace OpenStack\ObjectStore\v1;
 
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\Common\Service\AbstractService;
 use OpenStack\ObjectStore\v1\Models\Account;
 use OpenStack\ObjectStore\v1\Models\Container;
+
 /**
  * @property \OpenStack\ObjectStore\v1\Api $api
  */
@@ -20,6 +23,7 @@ class Service extends AbstractService
     {
         return $this->model(Account::class);
     }
+
     /**
      * Retrieves a collection of container resources in a generator format.
      *
@@ -31,8 +35,10 @@ class Service extends AbstractService
     public function listContainers(array $options = [], callable $mapFn = null)
     {
         $options = array_merge($options, ['format' => 'json']);
+
         return $this->model(Container::class)->enumerate($this->api->getAccount(), $options, $mapFn);
     }
+
     /**
      * Retrieves a Container object and populates its name according to the value provided. Please note that the
      * remote API is not contacted.
@@ -45,6 +51,7 @@ class Service extends AbstractService
     {
         return $this->model(Container::class, ['name' => $name]);
     }
+
     /**
      * Creates a new container according to the values provided.
      *
@@ -56,6 +63,7 @@ class Service extends AbstractService
     {
         return $this->getContainer()->create($data);
     }
+
     /**
      * Checks the existence of a container.
      *
@@ -69,6 +77,7 @@ class Service extends AbstractService
     {
         try {
             $this->execute($this->api->headContainer(), ['name' => $name]);
+
             return true;
         } catch (BadResponseError $e) {
             if (404 === $e->getResponse()->getStatusCode()) {

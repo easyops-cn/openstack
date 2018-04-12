@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\ObjectStore\v1\Models;
 
 use GuzzleHttp\Promise\Promise;
@@ -12,33 +14,44 @@ use OpenStack\Common\Resource\Deletable;
 use OpenStack\Common\Resource\HasMetadata;
 use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
+
 /**
  * @property \OpenStack\ObjectStore\v1\Api $api
  */
 class Container extends OperatorResource implements Creatable, Deletable, Retrievable, Listable, HasMetadata
 {
     use MetadataTrait;
+
     const METADATA_PREFIX = 'X-Container-Meta-';
+
     /** @var int */
     public $objectCount;
+
     /** @var int */
     public $bytesUsed;
+
     /** @var string */
     public $name;
+
     /** @var array */
     public $metadata;
+
     protected $markerKey = 'name';
+
     /**
      * {@inheritdoc}
      */
     public function populateFromResponse(ResponseInterface $response)
     {
         parent::populateFromResponse($response);
+
         $this->objectCount = $response->getHeaderLine('X-Container-Object-Count');
-        $this->bytesUsed = $response->getHeaderLine('X-Container-Bytes-Used');
-        $this->metadata = $this->parseMetadata($response);
+        $this->bytesUsed   = $response->getHeaderLine('X-Container-Bytes-Used');
+        $this->metadata    = $this->parseMetadata($response);
+
         return $this;
     }
+
     /**
      * Retrieves a collection of object resources in the form of a generator.
      *
@@ -50,14 +63,17 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     public function listObjects(array $options = [], callable $mapFn = null)
     {
         $options = array_merge($options, ['name' => $this->name, 'format' => 'json']);
-        $appendContainerNameFn = function (StorageObject $resource) use($mapFn) {
+
+        $appendContainerNameFn = function (StorageObject $resource) use ($mapFn) {
             $resource->containerName = $this->name;
             if ($mapFn) {
                 call_user_func_array($mapFn, [&$resource]);
             }
         };
+
         return $this->model(StorageObject::class)->enumerate($this->api->getContainer(), $options, $appendContainerNameFn);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -66,6 +82,7 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
         $response = $this->executeWithState($this->api->headContainer());
         $this->populateFromResponse($response);
     }
+
     /**
      * @param array $data {@see \OpenStack\ObjectStore\v1\Api::putContainer}
      *
@@ -74,10 +91,13 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     public function create(array $data)
     {
         $response = $this->execute($this->api->putContainer(), $data);
+
         $this->populateFromResponse($response);
         $this->name = $data['name'];
+
         return $this;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -85,36 +105,47 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     {
         $this->executeWithState($this->api->deleteContainer());
     }
+
     /**
      * {@inheritdoc}
      */
     public function mergeMetadata(array $metadata)
     {
-        $response = $this->execute($this->api->postContainer(), ['name' => $this->name, 'metadata' => $metadata]);
+        $response       = $this->execute($this->api->postContainer(), ['name' => $this->name, 'metadata' => $metadata]);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * {@inheritdoc}
      */
     public function resetMetadata(array $metadata)
     {
-        $options = ['name' => $this->name, 'removeMetadata' => [], 'metadata' => $metadata];
+        $options = [
+            'name'           => $this->name,
+            'removeMetadata' => [],
+            'metadata'       => $metadata,
+        ];
+
         foreach ($this->getMetadata() as $key => $val) {
             if (!array_key_exists($key, $metadata)) {
                 $options['removeMetadata'][$key] = 'True';
             }
         }
-        $response = $this->execute($this->api->postContainer(), $options);
+
+        $response       = $this->execute($this->api->postContainer(), $options);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * {@inheritdoc}
      */
     public function getMetadata()
     {
         $response = $this->executeWithState($this->api->headContainer());
+
         return $this->parseMetadata($response);
     }
+
     /**
      * Retrieves an StorageObject and populates its `name` and `containerName` properties according to the name provided and
      * the name of this container. A HTTP call will not be executed by default - you need to call
@@ -128,6 +159,7 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     {
         return $this->model(StorageObject::class, ['containerName' => $this->name, 'name' => $name]);
     }
+
     /**
      * Identifies whether an object exists in this container.
      *
@@ -142,6 +174,7 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     {
         try {
             $this->getObject($name)->retrieve();
+
             return true;
         } catch (BadResponseError $e) {
             if (404 === $e->getResponse()->getStatusCode()) {
@@ -150,6 +183,7 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
             throw $e;
         }
     }
+
     /**
      * Creates a single object according to the values provided.
      *
@@ -161,6 +195,7 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     {
         return $this->model(StorageObject::class)->create($data + ['containerName' => $this->name]);
     }
+
     /**
      * Creates a Dynamic Large Object by chunking a file into smaller segments and uploading them into a holding
      * container. When this completes, a manifest file is uploaded which references the prefix of the segments,
@@ -178,22 +213,37 @@ class Container extends OperatorResource implements Creatable, Deletable, Retrie
     {
         /** @var \Psr\Http\Message\StreamInterface $stream */
         $stream = $data['stream'];
-        $segmentSize = isset($data['segmentSize']) ? $data['segmentSize'] : 1073741824;
-        $segmentContainer = isset($data['segmentContainer']) ? $data['segmentContainer'] : $this->name . '_segments';
-        $segmentPrefix = isset($data['segmentPrefix']) ? $data['segmentPrefix'] : sprintf('%s/%s/%d', $data['name'], microtime(true), $stream->getSize());
+
+        $segmentSize      = isset($data['segmentSize']) ? $data['segmentSize'] : 1073741824;
+        $segmentContainer = isset($data['segmentContainer']) ? $data['segmentContainer'] : $this->name.'_segments';
+        $segmentPrefix    = isset($data['segmentPrefix'])
+            ? $data['segmentPrefix']
+            : sprintf('%s/%s/%d', $data['name'], microtime(true), $stream->getSize());
+
         /** @var \OpenStack\ObjectStore\v1\Service $service */
         $service = $this->getService();
         if (!$service->containerExists($segmentContainer)) {
             $service->createContainer(['name' => $segmentContainer]);
         }
+
         $promises = [];
-        $count = 0;
+        $count    = 0;
+
         while (!$stream->eof() && $count < round($stream->getSize() / $segmentSize)) {
-            $promises[] = $this->model(StorageObject::class)->createAsync(['name' => sprintf('%s/%d', $segmentPrefix, ++$count), 'stream' => new LimitStream($stream, $segmentSize, ($count - 1) * $segmentSize), 'containerName' => $segmentContainer]);
+            $promises[] = $this->model(StorageObject::class)->createAsync([
+                'name'          => sprintf('%s/%d', $segmentPrefix, ++$count),
+                'stream'        => new LimitStream($stream, $segmentSize, ($count - 1) * $segmentSize),
+                'containerName' => $segmentContainer,
+            ]);
         }
+
         /** @var Promise $p */
         $p = \GuzzleHttp\Promise\all($promises);
         $p->wait();
-        return $this->createObject(['name' => $data['name'], 'objectManifest' => sprintf('%s/%s', $segmentContainer, $segmentPrefix)]);
+
+        return $this->createObject([
+            'name'           => $data['name'],
+            'objectManifest' => sprintf('%s/%s', $segmentContainer, $segmentPrefix),
+        ]);
     }
 }

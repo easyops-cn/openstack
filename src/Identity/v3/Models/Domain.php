@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Identity\v3\Models;
 
 use OpenStack\Common\Error\BadResponseError;
@@ -9,6 +11,7 @@ use OpenStack\Common\Resource\Deletable;
 use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
+
 /**
  * @property \OpenStack\Identity\v3\Api $api
  */
@@ -16,16 +19,22 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
 {
     /** @var string */
     public $id;
+
     /** @var string */
     public $name;
+
     /** @var array */
     public $links;
+
     /** @var bool */
     public $enabled;
+
     /** @var string */
     public $description;
-    protected $resourceKey = 'domain';
+
+    protected $resourceKey  = 'domain';
     protected $resourcesKey = 'domains';
+
     /**
      * {@inheritdoc}
      *
@@ -34,8 +43,10 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     public function create(array $data)
     {
         $response = $this->execute($this->api->postDomains(), $data);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -44,6 +55,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
         $response = $this->executeWithState($this->api->getDomain());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -52,6 +64,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
         $response = $this->executeWithState($this->api->patchDomain());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -59,6 +72,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         $this->executeWithState($this->api->deleteDomain());
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::getUserRoles}
      *
@@ -67,8 +81,10 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     public function listUserRoles(array $options = [])
     {
         $options['domainId'] = $this->id;
+
         return $this->model(Role::class)->enumerate($this->api->getUserRoles(), $options);
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::putUserRoles}
      */
@@ -76,6 +92,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         $this->execute($this->api->putUserRoles(), ['domainId' => $this->id] + $options);
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::headUserRole}
      *
@@ -85,11 +102,13 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         try {
             $this->execute($this->api->headUserRole(), ['domainId' => $this->id] + $options);
+
             return true;
         } catch (BadResponseError $e) {
             return false;
         }
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::deleteUserRole}
      */
@@ -97,6 +116,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         $this->execute($this->api->deleteUserRole(), ['domainId' => $this->id] + $options);
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::getGroupRoles}
      *
@@ -105,8 +125,10 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     public function listGroupRoles(array $options = [])
     {
         $options['domainId'] = $this->id;
+
         return $this->model(Role::class)->enumerate($this->api->getGroupRoles(), $options);
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::putGroupRole}
      */
@@ -114,6 +136,7 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         $this->execute($this->api->putGroupRole(), ['domainId' => $this->id] + $options);
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::headGroupRole}
      *
@@ -123,11 +146,13 @@ class Domain extends OperatorResource implements Creatable, Listable, Retrievabl
     {
         try {
             $this->execute($this->api->headGroupRole(), ['domainId' => $this->id] + $options);
+
             return true;
         } catch (BadResponseError $e) {
             return false;
         }
     }
+
     /**
      * @param array $options {@see \OpenStack\Identity\v3\Api::deleteGroupRole}
      */

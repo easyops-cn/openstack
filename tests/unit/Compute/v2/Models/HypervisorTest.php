@@ -5,22 +5,30 @@ namespace OpenStack\Test\Compute\v2\Models;
 use OpenStack\Compute\v2\Api;
 use OpenStack\Compute\v2\Models\Hypervisor;
 use OpenStack\Test\TestCase;
+
 class HypervisorTest extends TestCase
 {
     /**@var Hypervisor */
     private $hypervisor;
+
     const ID = 1;
+
     public function setUp()
     {
         parent::setUp();
+
         $this->rootFixturesDir = dirname(__DIR__);
+
         $this->hypervisor = new Hypervisor($this->client->reveal(), new Api());
         $this->hypervisor->id = self::ID;
     }
+
     public function test_it_retrieves()
     {
         $this->setupMock('GET', 'os-hypervisors/' . self::ID, null, [], 'hypervisor-get');
+
         $this->hypervisor->retrieve();
+
         $this->assertEquals('1', $this->hypervisor->id);
         $this->assertEquals('enabled', $this->hypervisor->status);
         $this->assertEquals('up', $this->hypervisor->state);

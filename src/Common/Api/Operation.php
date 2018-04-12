@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Common\Api;
 
 /**
@@ -15,12 +17,16 @@ class Operation
 {
     /** @var string The HTTP method */
     private $method;
+
     /** @var string The URL path */
     private $path;
+
     /** @var string The top-level JSON key */
     private $jsonKey;
+
     /** @var []Parameter The parameters of this operation */
     private $params;
+
     /**
      * @param array $definition The data definition (in array form) that will populate this
      *                          operation. Usually this is retrieved from an {@see ApiInterface}
@@ -29,12 +35,15 @@ class Operation
     public function __construct(array $definition)
     {
         $this->method = $definition['method'];
-        $this->path = $definition['path'];
+        $this->path   = $definition['path'];
+
         if (isset($definition['jsonKey'])) {
             $this->jsonKey = $definition['jsonKey'];
         }
+
         $this->params = self::toParamArray($definition['params']);
     }
+
     /**
      * @return string
      */
@@ -42,6 +51,7 @@ class Operation
     {
         return $this->path;
     }
+
     /**
      * @return string
      */
@@ -49,6 +59,7 @@ class Operation
     {
         return $this->method;
     }
+
     /**
      * Indicates whether this operation supports a parameter.
      *
@@ -60,6 +71,7 @@ class Operation
     {
         return isset($this->params[$key]);
     }
+
     /**
      * @param $name
      *
@@ -69,6 +81,7 @@ class Operation
     {
         return isset($this->params[$name]) ? $this->params[$name] : null;
     }
+
     /**
      * @return string
      */
@@ -76,6 +89,7 @@ class Operation
     {
         return $this->jsonKey ?: '';
     }
+
     /**
      * A convenience method that will take a generic array of data and convert it into an array of
      * {@see Parameter} objects.
@@ -87,11 +101,14 @@ class Operation
     public static function toParamArray(array $data)
     {
         $params = [];
+
         foreach ($data as $name => $param) {
             $params[$name] = new Parameter($param + ['name' => $name]);
         }
+
         return $params;
     }
+
     /**
      * This method will validate all of the user-provided values and throw an exception if any
      * failures are detected. This is useful for basic sanity-checking before a request is
@@ -112,6 +129,7 @@ class Operation
                 throw new \Exception(sprintf('"%s" is a required option, but it was not provided', $paramName));
             }
         }
+
         return true;
     }
 }

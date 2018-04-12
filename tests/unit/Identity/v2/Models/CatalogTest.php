@@ -5,14 +5,18 @@ namespace OpenStack\Test\Identity\v2\Models;
 use OpenStack\Identity\v2\Api;
 use OpenStack\Identity\v2\Models\Catalog;
 use OpenStack\Test\TestCase;
+
 class CatalogTest extends TestCase
 {
     private $catalog;
+
     public function setUp()
     {
         parent::setUp();
+
         $this->catalog = new Catalog($this->client->reveal(), new Api());
     }
+
     /**
      * @expectedException \RuntimeException
      */

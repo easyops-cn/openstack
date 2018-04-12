@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Networking\v2;
 
 use OpenStack\Common\Service\AbstractService;
@@ -13,6 +15,7 @@ use OpenStack\Networking\v2\Models\Pool;
 use OpenStack\Networking\v2\Models\Port;
 use OpenStack\Networking\v2\Models\Quota;
 use OpenStack\Networking\v2\Models\Subnet;
+
 /**
  * Network v2 service for OpenStack.
  *
@@ -31,6 +34,7 @@ class Service extends AbstractService
     {
         return $this->model(Network::class)->create($options);
     }
+
     /**
      * Create a new network resources.
      *
@@ -42,6 +46,7 @@ class Service extends AbstractService
     {
         return $this->model(Network::class)->bulkCreate($options);
     }
+
     /**
      * Retrieve a network object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -55,6 +60,7 @@ class Service extends AbstractService
     {
         return $this->model(Network::class, ['id' => $id]);
     }
+
     /**
      * List networks.
      *
@@ -66,6 +72,7 @@ class Service extends AbstractService
     {
         return $this->model(Network::class)->enumerate($this->api->getNetworks(), $options);
     }
+
     /**
      * Create a new subnet resource.
      *
@@ -77,6 +84,7 @@ class Service extends AbstractService
     {
         return $this->model(Subnet::class)->create($options);
     }
+
     /**
      * Create a new subnet resources.
      *
@@ -88,6 +96,7 @@ class Service extends AbstractService
     {
         return $this->model(Subnet::class)->bulkCreate($options);
     }
+
     /**
      * Retrieve a subnet object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -101,6 +110,7 @@ class Service extends AbstractService
     {
         return $this->model(Subnet::class, ['id' => $id]);
     }
+
     /**
      * List subnets.
      *
@@ -112,6 +122,7 @@ class Service extends AbstractService
     {
         return $this->model(Subnet::class)->enumerate($this->api->getSubnets(), $options);
     }
+
     /**
      * Create a new port resource.
      *
@@ -123,6 +134,7 @@ class Service extends AbstractService
     {
         return $this->model(Port::class)->create($options);
     }
+
     /**
      * Create new port resources.
      *
@@ -134,6 +146,7 @@ class Service extends AbstractService
     {
         return $this->model(Port::class)->bulkCreate($options);
     }
+
     /**
      * Retrieve a subnet object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -147,6 +160,7 @@ class Service extends AbstractService
     {
         return $this->model(Port::class, ['id' => $id]);
     }
+
     /**
      * List ports.
      *
@@ -158,6 +172,7 @@ class Service extends AbstractService
     {
         return $this->model(Port::class)->enumerate($this->api->getPorts(), $options);
     }
+
     /**
      * Lists quotas for projects with non-default quota values.
      *
@@ -167,6 +182,7 @@ class Service extends AbstractService
     {
         return $this->model(Quota::class)->enumerate($this->api->getQuotas(), []);
     }
+
     /**
      * Lists quotas for a project.
      *
@@ -182,6 +198,7 @@ class Service extends AbstractService
     {
         return $this->model(Quota::class, ['tenantId' => $tenantId]);
     }
+
     /**
      * Lists default quotas for a project.
      *
@@ -193,8 +210,10 @@ class Service extends AbstractService
     {
         $quota = $this->model(Quota::class, ['tenantId' => $tenantId]);
         $quota->populateFromResponse($this->execute($this->api->getQuotaDefault(), ['tenantId' => $tenantId]));
+
         return $quota;
     }
+
     /**
      * Lists loadbalancers for projects.
      *
@@ -204,6 +223,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancer::class)->enumerate($this->api->getLoadBalancers());
     }
+
     /**
      * Retrieve an instance of a LoadBalancer object.
      *
@@ -215,6 +235,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancer::class, ['id' => $id]);
     }
+
     /**
      * Create a new loadbalancer resource.
      *
@@ -226,6 +247,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancer::class)->create($options);
     }
+
     /**
      * Lists loadbalancer listeners.
      *
@@ -235,6 +257,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerListener::class)->enumerate($this->api->getLoadBalancerListeners());
     }
+
     /**
      * Retrieve an instance of a loadbalancer listener object.
      *
@@ -246,6 +269,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerListener::class, ['id' => $id]);
     }
+
     /**
      * Create a new loadbalancer Listener resource.
      *
@@ -257,6 +281,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerListener::class)->create($options);
     }
+
     /**
      * Lists loadbalancer pools.
      *
@@ -266,6 +291,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerPool::class)->enumerate($this->api->getLoadBalancerPools());
     }
+
     /**
      * Retrieve an instance of a loadbalancer Pool object.
      *
@@ -277,6 +303,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerPool::class, ['id' => $id]);
     }
+
     /**
      * Create a new loadbalancer Pool resource.
      *
@@ -288,6 +315,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerPool::class)->create($options);
     }
+
     /**
      * Lists loadbalancer members.
      *
@@ -299,6 +327,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerPool::class, ['poolId' => $poolId])->enumerate($this->api->getLoadBalancerMembers());
     }
+
     /**
      * Retrieve an instance of a loadbalancer Member object.
      *
@@ -311,6 +340,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerMember::class, ['poolId' => $poolId, 'id' => $memberId]);
     }
+
     /**
      * Create a new loadbalancer member resource.
      *
@@ -322,6 +352,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerMember::class)->create($options);
     }
+
     /**
      * Lists loadbalancer healthmonitors.
      *
@@ -331,6 +362,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerHealthMonitor::class)->enumerate($this->api->getLoadBalancerHealthMonitors());
     }
+
     /**
      * Retrieve an instance of a loadbalancer healthmonitor object.
      *
@@ -342,6 +374,7 @@ class Service extends AbstractService
     {
         return $this->model(LoadBalancerHealthMonitor::class, ['id' => $id]);
     }
+
     /**
      * Create a new loadbalancer healthmonitor resource.
      *

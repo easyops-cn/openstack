@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Common;
 
 /**
@@ -24,6 +26,7 @@ class JsonPath
 {
     /** @var array */
     private $jsonStructure;
+
     /**
      * @param $structure The initial data structure to extract from and insert into. Typically this will be a
      *                   multidimensional associative array; but well-formed JSON strings are also acceptable.
@@ -32,6 +35,7 @@ class JsonPath
     {
         $this->jsonStructure = is_string($structure) ? json_decode($structure, true) : $structure;
     }
+
     /**
      * Set a node in the structure.
      *
@@ -42,6 +46,7 @@ class JsonPath
     {
         $this->jsonStructure = $this->setPath($path, $value, $this->jsonStructure);
     }
+
     /**
      * Internal method for recursive calls.
      *
@@ -55,16 +60,20 @@ class JsonPath
     {
         $nodes = explode('.', $path);
         $point = array_shift($nodes);
+
         if (!isset($json[$point])) {
             $json[$point] = [];
         }
+
         if (!empty($nodes)) {
             $json[$point] = $this->setPath(implode('.', $nodes), $value, $json[$point]);
         } else {
             $json[$point] = $value;
         }
+
         return $json;
     }
+
     /**
      * Return the updated structure.
      *
@@ -74,6 +83,7 @@ class JsonPath
     {
         return $this->jsonStructure;
     }
+
     /**
      * Get a path's value. If no path can be matched, NULL is returned.
      *
@@ -85,6 +95,7 @@ class JsonPath
     {
         return $this->getPath($path, $this->jsonStructure);
     }
+
     /**
      * Internal method for recursion.
      *
@@ -95,9 +106,11 @@ class JsonPath
     {
         $nodes = explode('.', $path);
         $point = array_shift($nodes);
+
         if (!isset($json[$point])) {
             return null;
         }
+
         if (empty($nodes)) {
             return $json[$point];
         } else {

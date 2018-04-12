@@ -1,8 +1,11 @@
 <?php
 
+
+
 namespace OpenStack\Common\Resource;
 
 use Psr\Http\Message\ResponseInterface;
+
 /**
  * Represents an API resource.
  */
@@ -17,12 +20,14 @@ interface ResourceInterface
      * @return self
      */
     public function populateFromResponse(ResponseInterface $response);
+
     /**
      * @param array $data
      *
      * @return mixed
      */
     public function populateFromArray(array $data);
+
     /**
      * @param string $name the name of the model class
      * @param mixed  $data either a {@see ResponseInterface} or data array that will populate the newly

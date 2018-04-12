@@ -1,10 +1,13 @@
 <?php
 
+
+
 namespace OpenStack\Common\Auth;
 
 interface Token
 {
     public function getId();
+
     /**
      * Indicates whether the token has expired or not.
      *

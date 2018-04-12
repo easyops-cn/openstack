@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Compute\v2;
 
 use OpenStack\Common\Service\AbstractService;
@@ -13,6 +15,7 @@ use OpenStack\Compute\v2\Models\Host;
 use OpenStack\Compute\v2\Models\Hypervisor;
 use OpenStack\Compute\v2\Models\AvailabilityZone;
 use OpenStack\Compute\v2\Models\QuotaSet;
+
 /**
  * Compute v2 service for OpenStack.
  *
@@ -32,6 +35,7 @@ class Service extends AbstractService
     {
         return $this->model(Server::class)->create($options);
     }
+
     /**
      * List servers.
      *
@@ -44,9 +48,11 @@ class Service extends AbstractService
      */
     public function listServers($detailed = false, array $options = [], callable $mapFn = null)
     {
-        $def = true === $detailed ? $this->api->getServersDetail() : $this->api->getServers();
+        $def = (true === $detailed) ? $this->api->getServersDetail() : $this->api->getServers();
+
         return $this->model(Server::class)->enumerate($def, $options, $mapFn);
     }
+
     /**
      * Retrieve a server object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -63,8 +69,10 @@ class Service extends AbstractService
     {
         $server = $this->model(Server::class);
         $server->populateFromArray($options);
+
         return $server;
     }
+
     /**
      * List flavors.
      *
@@ -77,8 +85,10 @@ class Service extends AbstractService
     public function listFlavors(array $options = [], callable $mapFn = null, $detailed = false)
     {
         $def = true === $detailed ? $this->api->getFlavorsDetail() : $this->api->getFlavors();
+
         return $this->model(Flavor::class)->enumerate($def, $options, $mapFn);
     }
+
     /**
      * Retrieve a flavor object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -93,8 +103,10 @@ class Service extends AbstractService
     {
         $flavor = $this->model(Flavor::class);
         $flavor->populateFromArray($options);
+
         return $flavor;
     }
+
     /**
      * Create a new flavor resource.
      *
@@ -106,6 +118,7 @@ class Service extends AbstractService
     {
         return $this->model(Flavor::class)->create($options);
     }
+
     /**
      * List images.
      *
@@ -118,6 +131,7 @@ class Service extends AbstractService
     {
         return $this->model(Image::class)->enumerate($this->api->getImages(), $options, $mapFn);
     }
+
     /**
      * Retrieve an image object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -132,8 +146,10 @@ class Service extends AbstractService
     {
         $image = $this->model(Image::class);
         $image->populateFromArray($options);
+
         return $image;
     }
+
     /**
      * List key pairs.
      *
@@ -146,6 +162,7 @@ class Service extends AbstractService
     {
         return $this->model(Keypair::class)->enumerate($this->api->getKeypairs(), $options, $mapFn);
     }
+
     /**
      * Create or import keypair.
      *
@@ -157,6 +174,7 @@ class Service extends AbstractService
     {
         return $this->model(Keypair::class)->create($options);
     }
+
     /**
      * Get keypair.
      *
@@ -168,8 +186,10 @@ class Service extends AbstractService
     {
         $keypair = $this->model(Keypair::class);
         $keypair->populateFromArray($options);
+
         return $keypair;
     }
+
     /**
      * Shows rate and absolute limits for the tenant.
      *
@@ -179,8 +199,10 @@ class Service extends AbstractService
     {
         $limits = $this->model(Limit::class);
         $limits->populateFromResponse($this->execute($this->api->getLimits(), []));
+
         return $limits;
     }
+
     /**
      * Shows summary statistics for all hypervisors over all compute nodes.
      *
@@ -190,8 +212,10 @@ class Service extends AbstractService
     {
         $statistics = $this->model(HypervisorStatistic::class);
         $statistics->populateFromResponse($this->execute($this->api->getHypervisorStatistics(), []));
+
         return $statistics;
     }
+
     /**
      * List hypervisors.
      *
@@ -204,9 +228,11 @@ class Service extends AbstractService
      */
     public function listHypervisors($detailed = false, array $options = [], callable $mapFn = null)
     {
-        $def = true === $detailed ? $this->api->getHypervisorsDetail() : $this->api->getHypervisors();
+        $def = (true === $detailed) ? $this->api->getHypervisorsDetail() : $this->api->getHypervisors();
+
         return $this->model(Hypervisor::class)->enumerate($def, $options, $mapFn);
     }
+
     /**
      * Shows details for a given hypervisor.
      *
@@ -217,8 +243,10 @@ class Service extends AbstractService
     public function getHypervisor(array $options = [])
     {
         $hypervisor = $this->model(Hypervisor::class);
+
         return $hypervisor->populateFromArray($options);
     }
+
     /**
      * List hosts.
      *
@@ -231,6 +259,7 @@ class Service extends AbstractService
     {
         return $this->model(Host::class)->enumerate($this->api->getHosts(), $options, $mapFn);
     }
+
     /**
      * Retrieve a host object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -247,8 +276,10 @@ class Service extends AbstractService
     {
         $host = $this->model(Host::class);
         $host->populateFromArray($options);
+
         return $host;
     }
+
     /**
      * List AZs.
      *
@@ -261,6 +292,7 @@ class Service extends AbstractService
     {
         return $this->model(AvailabilityZone::class)->enumerate($this->api->getAvailabilityZones(), $options, $mapFn);
     }
+
     /**
      * Shows A Quota for a tenant.
      *
@@ -273,6 +305,7 @@ class Service extends AbstractService
     {
         $quotaSet = $this->model(QuotaSet::class);
         $quotaSet->populateFromResponse($this->execute($detailed ? $this->api->getQuotaSetDetail() : $this->api->getQuotaSet(), ['tenantId' => $tenantId]));
+
         return $quotaSet;
     }
 }

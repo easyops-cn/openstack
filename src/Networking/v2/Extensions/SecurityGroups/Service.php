@@ -5,6 +5,7 @@ namespace OpenStack\Networking\v2\Extensions\SecurityGroups;
 use OpenStack\Common\Service\AbstractService;
 use OpenStack\Networking\v2\Extensions\SecurityGroups\Models\SecurityGroup;
 use OpenStack\Networking\v2\Extensions\SecurityGroups\Models\SecurityGroupRule;
+
 /**
  * @property Api $api
  */
@@ -14,10 +15,12 @@ class Service extends AbstractService
     {
         return $this->model(SecurityGroup::class, $info);
     }
+
     private function securityGroupRule(array $info = [])
     {
         return $this->model(SecurityGroupRule::class, $info);
     }
+
     /**
      * @return \Generator
      */
@@ -25,6 +28,7 @@ class Service extends AbstractService
     {
         return $this->securityGroup()->enumerate($this->api->getSecurityGroups());
     }
+
     /**
      * @param array $options
      *
@@ -34,6 +38,7 @@ class Service extends AbstractService
     {
         return $this->securityGroup()->create($options);
     }
+
     /**
      * @param string $id
      *
@@ -43,6 +48,7 @@ class Service extends AbstractService
     {
         return $this->securityGroup(['id' => $id]);
     }
+
     /**
      * @return \Generator
      */
@@ -50,6 +56,7 @@ class Service extends AbstractService
     {
         return $this->securityGroupRule()->enumerate($this->api->getSecurityRules());
     }
+
     /**
      * @param array $options
      *
@@ -59,6 +66,7 @@ class Service extends AbstractService
     {
         return $this->securityGroupRule()->create($options);
     }
+
     /**
      * @param string $id
      *

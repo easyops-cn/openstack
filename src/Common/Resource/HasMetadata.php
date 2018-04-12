@@ -1,8 +1,11 @@
 <?php
 
+
+
 namespace OpenStack\Common\Resource;
 
 use Psr\Http\Message\ResponseInterface;
+
 interface HasMetadata
 {
     /**
@@ -12,6 +15,7 @@ interface HasMetadata
      * @return array
      */
     public function getMetadata();
+
     /**
      * Merges a set of new values with those which already exist (on the remote API) for a resource. For example, if
      * the resource has this metadata already set:.
@@ -31,6 +35,7 @@ interface HasMetadata
      * @param array $metadata The new metadata items
      */
     public function mergeMetadata(array $metadata);
+
     /**
      * Replaces all of the existing metadata items for a resource with a new set of values. Any metadata items which
      * are not provided in the call are removed from the resource. For example, if the resource has this metadata
@@ -48,6 +53,7 @@ interface HasMetadata
      * @param array $metadata The new metadata items
      */
     public function resetMetadata(array $metadata);
+
     /**
      * Extracts metadata from a response object and returns it in the form of an associative array.
      *

@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Identity\v3\Models;
 
 use OpenStack\Common\Resource\Alias;
@@ -9,6 +11,7 @@ use OpenStack\Common\Resource\Deletable;
 use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
+
 /**
  * @property \OpenStack\Identity\v3\Api $api
  */
@@ -16,25 +19,35 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
 {
     /** @var string */
     public $id;
+
     /** @var string */
     public $name;
+
     /** @var string */
     public $type;
+
     /** @var string */
     public $description;
+
     /** @var []Endpoint */
     public $endpoints;
+
     /** @var array */
     public $links;
-    protected $resourceKey = 'service';
+
+    protected $resourceKey  = 'service';
     protected $resourcesKey = 'services';
+
     /**
      * {@inheritdoc}
      */
     protected function getAliases()
     {
-        return parent::getAliases() + ['endpoints' => new Alias('endpoints', Endpoint::class, true)];
+        return parent::getAliases() + [
+            'endpoints' => new Alias('endpoints', Endpoint::class, true),
+        ];
     }
+
     /**
      * {@inheritdoc}
      *
@@ -43,8 +56,10 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
     public function create(array $data)
     {
         $response = $this->execute($this->api->postServices(), $data);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -53,6 +68,7 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
         $response = $this->executeWithState($this->api->getService());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -61,6 +77,7 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
         $response = $this->executeWithState($this->api->patchService());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -68,14 +85,17 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
     {
         $this->executeWithState($this->api->deleteService());
     }
+
     private function nameMatches($value)
     {
         return $this->name && $this->name == $value;
     }
+
     private function typeMatches($value)
     {
-        return $this->type && ($this->type = $value);
+        return $this->type && $this->type = $value;
     }
+
     /**
      * Retrieve the base URL for a service.
      *
@@ -91,11 +111,13 @@ class Service extends OperatorResource implements Creatable, Listable, Retrievab
         if (!$this->nameMatches($name) || !$this->typeMatches($type)) {
             return false;
         }
+
         foreach ($this->endpoints as $endpoint) {
             if ($endpoint->regionMatches($region) && $endpoint->interfaceMatches($interface)) {
                 return $endpoint->url;
             }
         }
+
         return false;
     }
 }

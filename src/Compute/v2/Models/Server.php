@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Compute\v2\Models;
 
 use OpenStack\Common\Resource\Alias;
@@ -16,69 +18,114 @@ use OpenStack\Networking\v2\Models\InterfaceAttachment;
 use OpenStack\Compute\v2\Enum;
 use OpenStack\Networking\v2\Extensions\SecurityGroups\Models\SecurityGroup;
 use Psr\Http\Message\ResponseInterface;
+
 /**
  * @property \OpenStack\Compute\v2\Api $api
  */
 class Server extends OperatorResource implements Creatable, Updateable, Deletable, Retrievable, Listable
 {
     use HasWaiterTrait;
+
     /** @var string */
     public $id;
+
     /** @var string */
     public $ipv4;
+
     /** @var string */
     public $ipv6;
+
     /** @var array */
     public $addresses;
+
     /** @var \DateTimeImmutable */
     public $created;
+
     /** @var \DateTimeImmutable */
     public $updated;
+
     /** @var Flavor */
     public $flavor;
+
     /** @var string */
     public $hostId;
+
     /** @var string */
     public $hypervisorHostname;
+
     /** @var Image */
     public $image;
+
     /** @var array */
     public $links;
+
     /** @var array */
     public $metadata;
+
     /** @var string */
     public $name;
+
     /** @var string */
     public $progress;
+
     /** @var string */
     public $status;
+
     /** @var string */
     public $tenantId;
+
     /** @var string */
     public $userId;
+
     /** @var string */
     public $adminPass;
+
     /** @var string */
     public $taskState;
+
     /** @var string */
     public $powerState;
+
     /** @var string */
     public $vmState;
+
     /** @var Fault */
     public $fault;
+
     /** @var string */
     public $keyName;
-    protected $resourceKey = 'server';
+
+    protected $resourceKey  = 'server';
     protected $resourcesKey = 'servers';
-    protected $markerKey = 'id';
-    protected $aliases = ['block_device_mapping_v2' => 'blockDeviceMapping', 'accessIPv4' => 'ipv4', 'accessIPv6' => 'ipv6', 'tenant_id' => 'tenantId', 'key_name' => 'keyName', 'user_id' => 'userId', 'security_groups' => 'securityGroups', 'OS-EXT-STS:task_state' => 'taskState', 'OS-EXT-STS:power_state' => 'powerState', 'OS-EXT-STS:vm_state' => 'vmState', 'OS-EXT-SRV-ATTR:hypervisor_hostname' => 'hypervisorHostname'];
+    protected $markerKey    = 'id';
+
+    protected $aliases = [
+        'block_device_mapping_v2'             => 'blockDeviceMapping',
+        'accessIPv4'                          => 'ipv4',
+        'accessIPv6'                          => 'ipv6',
+        'tenant_id'                           => 'tenantId',
+        'key_name'                            => 'keyName',
+        'user_id'                             => 'userId',
+        'security_groups'                     => 'securityGroups',
+        'OS-EXT-STS:task_state'               => 'taskState',
+        'OS-EXT-STS:power_state'              => 'powerState',
+        'OS-EXT-STS:vm_state'                 => 'vmState',
+        'OS-EXT-SRV-ATTR:hypervisor_hostname' => 'hypervisorHostname',
+    ];
+
     /**
      * {@inheritdoc}
      */
     protected function getAliases()
     {
-        return parent::getAliases() + ['image' => new Alias('image', Image::class), 'flavor' => new Alias('flavor', Flavor::class), 'created' => new Alias('created', \DateTimeImmutable::class), 'updated' => new Alias('updated', \DateTimeImmutable::class)];
+        return parent::getAliases() + [
+            'image'   => new Alias('image', Image::class),
+            'flavor'  => new Alias('flavor', Flavor::class),
+            'created' => new Alias('created', \DateTimeImmutable::class),
+            'updated' => new Alias('updated', \DateTimeImmutable::class),
+        ];
     }
+
     /**
      * {@inheritdoc}
      *
@@ -89,9 +136,12 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         if (!isset($userOptions['imageId']) && !isset($userOptions['blockDeviceMapping'][0]['uuid'])) {
             throw new \RuntimeException('imageId or blockDeviceMapping.uuid must be set.');
         }
+
         $response = $this->execute($this->api->postServer(), $userOptions);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -100,6 +150,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         $response = $this->execute($this->api->putServer(), $this->getAttrs(['id', 'name', 'ipv4', 'ipv6']));
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -107,6 +158,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         $this->execute($this->api->deleteServer(), $this->getAttrs(['id']));
     }
+
     /**
      * {@inheritdoc}
      */
@@ -115,6 +167,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         $response = $this->execute($this->api->getServer(), $this->getAttrs(['id']));
         $this->populateFromResponse($response);
     }
+
     /**
      * Changes the root password for a server.
      *
@@ -122,15 +175,23 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function changePassword($newPassword)
     {
-        $this->execute($this->api->changeServerPassword(), ['id' => $this->id, 'password' => $newPassword]);
+        $this->execute($this->api->changeServerPassword(), [
+            'id'       => $this->id,
+            'password' => $newPassword,
+        ]);
     }
+
     /**
      * Issue a resetState call to the server.
      */
     public function resetState()
     {
-        $this->execute($this->api->resetServerState(), ['id' => $this->id, 'resetState' => ['state' => 'active']]);
+        $this->execute($this->api->resetServerState(), [
+            'id'         => $this->id,
+            'resetState' => ['state' => 'active'],
+        ]);
     }
+
     /**
      * Reboots the server.
      *
@@ -141,22 +202,35 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         if (!in_array($type, ['SOFT', 'HARD'])) {
             throw new \RuntimeException('Reboot type must either be SOFT or HARD');
         }
-        $this->execute($this->api->rebootServer(), ['id' => $this->id, 'type' => $type]);
+
+        $this->execute($this->api->rebootServer(), [
+            'id'   => $this->id,
+            'type' => $type,
+        ]);
     }
+
     /**
      * Starts server.
      */
     public function start()
     {
-        $this->execute($this->api->startServer(), ['id' => $this->id, 'os-start' => null]);
+        $this->execute($this->api->startServer(), [
+            'id'       => $this->id,
+            'os-start' => null,
+        ]);
     }
+
     /**
      * Stops server.
      */
     public function stop()
     {
-        $this->execute($this->api->stopServer(), ['id' => $this->id, 'os-stop' => null]);
+        $this->execute($this->api->stopServer(), [
+            'id'      => $this->id,
+            'os-stop' => null,
+        ]);
     }
+
     /**
      * Rebuilds the server.
      *
@@ -165,9 +239,11 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function rebuild(array $options)
     {
         $options['id'] = $this->id;
-        $response = $this->execute($this->api->rebuildServer(), $options);
+        $response      = $this->execute($this->api->rebuildServer(), $options);
+
         $this->populateFromResponse($response);
     }
+
     /**
      * Rescues the server.
      *
@@ -178,9 +254,11 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function rescue(array $options)
     {
         $options['id'] = $this->id;
-        $response = $this->execute($this->api->rescueServer(), $options);
+        $response      = $this->execute($this->api->rescueServer(), $options);
+
         return Utils::jsonDecode($response)['adminPass'];
     }
+
     /**
      * Unrescues the server.
      */
@@ -188,6 +266,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         $this->execute($this->api->unrescueServer(), ['unrescue' => null, 'id' => $this->id]);
     }
+
     /**
      * Resizes the server to a new flavor. Once this operation is complete and server has transitioned
      * to an active state, you will either need to call {@see confirmResize()} or {@see revertResize()}.
@@ -196,9 +275,14 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function resize($flavorId)
     {
-        $response = $this->execute($this->api->resizeServer(), ['id' => $this->id, 'flavorId' => $flavorId]);
+        $response = $this->execute($this->api->resizeServer(), [
+            'id'       => $this->id,
+            'flavorId' => $flavorId,
+        ]);
+
         $this->populateFromResponse($response);
     }
+
     /**
      * Confirms a previous resize operation.
      */
@@ -206,6 +290,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         $this->execute($this->api->confirmServerResize(), ['confirmResize' => null, 'id' => $this->id]);
     }
+
     /**
      * Reverts a previous resize operation.
      */
@@ -213,6 +298,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         $this->execute($this->api->revertServerResize(), ['revertResize' => null, 'id' => $this->id]);
     }
+
     /**
      * Gets the console output of the server.
      *
@@ -223,9 +309,16 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getConsoleOutput($length = -1)
     {
         $definition = $length == -1 ? $this->api->getAllConsoleOutput() : $this->api->getConsoleOutput();
-        $response = $this->execute($definition, ['os-getConsoleOutput' => new \stdClass(), 'id' => $this->id, 'length' => $length]);
+
+        $response = $this->execute($definition, [
+            'os-getConsoleOutput' => new \stdClass(),
+            'id'                  => $this->id,
+            'length'              => $length,
+        ]);
+
         return Utils::jsonDecode($response)['output'];
     }
+
     /**
      * Gets a VNC console for a server.
      *
@@ -237,8 +330,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getVncConsole($type = Enum::CONSOLE_NOVNC)
     {
         $response = $this->execute($this->api->getVncConsole(), ['id' => $this->id, 'type' => $type]);
+
         return Utils::jsonDecode($response)['console'];
     }
+
     /**
      * Gets a RDP console for a server.
      *
@@ -249,8 +344,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getRDPConsole($type = Enum::CONSOLE_RDP_HTML5)
     {
         $response = $this->execute($this->api->getRDPConsole(), ['id' => $this->id, 'type' => $type]);
+
         return Utils::jsonDecode($response)['console'];
     }
+
     /**
      * Gets a Spice console for a server.
      *
@@ -261,8 +358,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getSpiceConsole($type = Enum::CONSOLE_SPICE_HTML5)
     {
         $response = $this->execute($this->api->getSpiceConsole(), ['id' => $this->id, 'type' => $type]);
+
         return Utils::jsonDecode($response)['console'];
     }
+
     /**
      * Gets a serial console for a server.
      *
@@ -273,8 +372,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getSerialConsole($type = Enum::CONSOLE_SERIAL)
     {
         $response = $this->execute($this->api->getSerialConsole(), ['id' => $this->id, 'type' => $type]);
+
         return Utils::jsonDecode($response)['console'];
     }
+
     /**
      * Creates an image for the current server.
      *
@@ -285,6 +386,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         $options['id'] = $this->id;
         $this->execute($this->api->createServerImage(), $options);
     }
+
     /**
      * Iterates over all the IP addresses for this server.
      *
@@ -295,10 +397,13 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function listAddresses(array $options = [])
     {
         $options['id'] = $this->id;
-        $data = isset($options['networkLabel']) ? $this->api->getAddressesByNetwork() : $this->api->getAddresses();
+
+        $data     = (isset($options['networkLabel'])) ? $this->api->getAddressesByNetwork() : $this->api->getAddresses();
         $response = $this->execute($data, $options);
+
         return Utils::jsonDecode($response)['addresses'];
     }
+
     /**
      * Returns Generator for InterfaceAttachment.
      *
@@ -308,6 +413,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         return $this->model(InterfaceAttachment::class)->enumerate($this->api->getInterfaceAttachments(), ['id' => $this->id]);
     }
+
     /**
      * Gets an interface attachment.
      *
@@ -317,9 +423,14 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function getInterfaceAttachment($portId)
     {
-        $response = $this->execute($this->api->getInterfaceAttachment(), ['id' => $this->id, 'portId' => $portId]);
+        $response = $this->execute($this->api->getInterfaceAttachment(), [
+            'id'     => $this->id,
+            'portId' => $portId,
+        ]);
+
         return $this->model(InterfaceAttachment::class)->populateFromResponse($response);
     }
+
     /**
      * Creates an interface attachment.
      *
@@ -332,9 +443,12 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         if (!isset($userOptions['networkId']) && !isset($userOptions['portId'])) {
             throw new \RuntimeException('networkId or portId must be set.');
         }
+
         $response = $this->execute($this->api->postInterfaceAttachment(), array_merge($userOptions, ['id' => $this->id]));
+
         return $this->model(InterfaceAttachment::class)->populateFromResponse($response);
     }
+
     /**
      * Detaches an interface attachment.
      *
@@ -342,8 +456,12 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function detachInterface($portId)
     {
-        $this->execute($this->api->deleteInterfaceAttachment(), ['id' => $this->id, 'portId' => $portId]);
+        $this->execute($this->api->deleteInterfaceAttachment(), [
+            'id'     => $this->id,
+            'portId' => $portId,
+        ]);
     }
+
     /**
      * Retrieves metadata from the API.
      *
@@ -352,8 +470,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function getMetadata()
     {
         $response = $this->execute($this->api->getServerMetadata(), ['id' => $this->id]);
+
         return $this->parseMetadata($response);
     }
+
     /**
      * Resets all the metadata for this server with the values provided. All existing metadata keys
      * will either be replaced or removed.
@@ -362,9 +482,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function resetMetadata(array $metadata)
     {
-        $response = $this->execute($this->api->putServerMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
+        $response       = $this->execute($this->api->putServerMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * Merges the existing metadata for the server with the values provided. Any existing keys
      * referenced in the user options will be replaced with the user's new values. All other
@@ -376,9 +497,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function mergeMetadata(array $metadata)
     {
-        $response = $this->execute($this->api->postServerMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
+        $response       = $this->execute($this->api->postServerMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * Retrieve the value for a specific metadata key.
      *
@@ -388,11 +510,13 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
      */
     public function getMetadataItem($key)
     {
-        $response = $this->execute($this->api->getServerMetadataKey(), ['id' => $this->id, 'key' => $key]);
-        $value = $this->parseMetadata($response)[$key];
+        $response             = $this->execute($this->api->getServerMetadataKey(), ['id' => $this->id, 'key' => $key]);
+        $value                = $this->parseMetadata($response)[$key];
         $this->metadata[$key] = $value;
+
         return $value;
     }
+
     /**
      * Remove a specific metadata key.
      *
@@ -403,8 +527,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         if (isset($this->metadata[$key])) {
             unset($this->metadata[$key]);
         }
+
         $this->execute($this->api->deleteServerMetadataKey(), ['id' => $this->id, 'key' => $key]);
     }
+
     /**
      * Add security group to a server (addSecurityGroup action).
      *
@@ -415,9 +541,12 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function addSecurityGroup(array $options)
     {
         $options['id'] = $this->id;
+
         $response = $this->execute($this->api->postSecurityGroup(), $options);
+
         return $this->model(SecurityGroup::class)->populateFromResponse($response);
     }
+
     /**
      * Add security group to a server (addSecurityGroup action).
      *
@@ -428,10 +557,12 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
         $options['id'] = $this->id;
         $this->execute($this->api->deleteSecurityGroup(), $options);
     }
+
     public function parseMetadata(ResponseInterface $response)
     {
         return Utils::jsonDecode($response)['metadata'];
     }
+
     /**
      * Returns Generator for SecurityGroups.
      *
@@ -441,6 +572,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         return $this->model(SecurityGroup::class)->enumerate($this->api->getSecurityGroups(), ['id' => $this->id]);
     }
+
     /**
      * Returns Generator for VolumeAttachment.
      *
@@ -450,6 +582,7 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     {
         return $this->model(VolumeAttachment::class)->enumerate($this->api->getVolumeAttachments(), ['id' => $this->id]);
     }
+
     /**
      * Attach a volume and returns volume that was attached.
      *
@@ -460,8 +593,10 @@ class Server extends OperatorResource implements Creatable, Updateable, Deletabl
     public function attachVolume($volumeId)
     {
         $response = $this->execute($this->api->postVolumeAttachments(), ['id' => $this->id, 'volumeId' => $volumeId]);
+
         return $this->model(VolumeAttachment::class)->populateFromResponse($response);
     }
+
     /**
      * Detach a volume.
      *

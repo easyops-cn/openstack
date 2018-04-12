@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Networking\v2\Models;
 
 use OpenStack\Common\Resource\Alias;
@@ -9,6 +11,7 @@ use OpenStack\Common\Resource\OperatorResource;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
 use OpenStack\Networking\v2\Api;
+
 /**
  * Represents a Neutron v2 LoadBalancer pool.
  *
@@ -20,76 +23,108 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
      * @var string
      */
     public $name;
+
     /**
      * @var string
      */
     public $description;
+
     /**
      * @var string
      */
     public $id;
+
     /**
      * @var string
      */
     public $tenantId;
+
     /**
      * @var string
      */
     public $protocol;
+
     /**
      * @var string
      */
     public $lbAlgorithm;
+
     /**
      * @var array
      */
     public $sessionPersistence;
+
     /**
      * @var bool
      */
     public $adminStateUp;
+
     /**
      * @var LoadBalancerListener[]
      */
     public $listeners;
+
     /**
      * @var LoadBalancerMember[]
      */
     public $members;
+
     /**
      * @var LoadBalancerHealthMonitor[]
      */
     public $healthmonitors;
+
     /**
      * @var string
      */
     public $healthmonitorId;
+
     /**
      * @var string
      */
     public $operatingStatus;
+
     /**
      * @var string
      */
     public $provisioningStatus;
+
     protected $resourcesKey = 'pools';
-    protected $resourceKey = 'pool';
-    protected $aliases = ['tenant_id' => 'tenantId', 'admin_state_up' => 'adminStateUp', 'lb_algorithm' => 'lbAlgorithm', 'session_persistence' => 'sessionPersistence', 'healthmonitor_id' => 'healthmonitorId', 'loadbalancer_id' => 'loadbalancerId', 'operating_status' => 'operatingStatus', 'provisioning_status' => 'provisioningStatus'];
+    protected $resourceKey  = 'pool';
+
+    protected $aliases = [
+        'tenant_id'           => 'tenantId',
+        'admin_state_up'      => 'adminStateUp',
+        'lb_algorithm'        => 'lbAlgorithm',
+        'session_persistence' => 'sessionPersistence',
+        'healthmonitor_id'    => 'healthmonitorId',
+        'loadbalancer_id'     => 'loadbalancerId',
+        'operating_status'    => 'operatingStatus',
+        'provisioning_status' => 'provisioningStatus',
+    ];
+
     /**
      * {@inheritdoc}
      */
     protected function getAliases()
     {
-        return parent::getAliases() + ['listeners' => new Alias('listeners', LoadBalancerListener::class, true), 'members' => new Alias('members', LoadBalancerMember::class, true), 'healthmonitors' => new Alias('healthmonitors', LoadBalancerHealthMonitor::class, true)];
+        return parent::getAliases() + [
+            'listeners'      => new Alias('listeners', LoadBalancerListener::class, true),
+            'members'        => new Alias('members', LoadBalancerMember::class, true),
+            'healthmonitors' => new Alias('healthmonitors', LoadBalancerHealthMonitor::class, true),
+        ];
     }
+
     /**
      * {@inheritdoc}
      */
     public function create(array $userOptions)
     {
         $response = $this->execute($this->api->postLoadBalancerPool(), $userOptions);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -98,6 +133,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
         $response = $this->execute($this->api->getLoadBalancerPool(), ['id' => (string) $this->id]);
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -106,6 +142,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
         $response = $this->executeWithState($this->api->putLoadBalancerPool());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -113,6 +150,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
     {
         $this->executeWithState($this->api->deleteLoadBalancerPool());
     }
+
     /**
      * Add a member to this pool.
      *
@@ -121,8 +159,10 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
     public function addMember(array $userOptions = [])
     {
         $userOptions = array_merge(['poolId' => $this->id], $userOptions);
+
         return $this->model(LoadBalancerMember::class)->create($userOptions);
     }
+
     /**
      * Get an instance of a member.
      *
@@ -134,6 +174,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
     {
         return $this->model(LoadBalancerMember::class, ['poolId' => $this->id, 'id' => $memberId]);
     }
+
     /**
      * Delete a member.
      *
@@ -143,6 +184,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
     {
         $this->model(LoadBalancerMember::class, ['poolId' => $this->id, 'id' => $memberId])->delete();
     }
+
     /**
      * Add a healthmonitor to this load balancer pool.
      *
@@ -153,6 +195,7 @@ class LoadBalancerPool extends OperatorResource implements Creatable, Retrievabl
     public function addHealthMonitor(array $userOptions = [])
     {
         $userOptions = array_merge(['poolId' => $this->id], $userOptions);
+
         return $this->model(LoadBalancerHealthMonitor::class)->create($userOptions);
     }
 }

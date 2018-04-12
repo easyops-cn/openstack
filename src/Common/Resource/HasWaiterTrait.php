@@ -1,8 +1,11 @@
 <?php
 
+
+
 namespace OpenStack\Common\Resource;
 
 use OpenStack\Common\Error\BadResponseError;
+
 /**
  * Contains reusable functionality for resources that have long operations which require waiting in
  * order to reach a particular state.
@@ -24,14 +27,18 @@ trait HasWaiterTrait
     public function waitUntil($status, $timeout = 60, $sleepPeriod = 1)
     {
         $startTime = time();
+
         while (true) {
             $this->retrieve();
+
             if ($this->status == $status || $this->shouldHalt($timeout, $startTime)) {
                 break;
             }
+
             sleep($sleepPeriod);
         }
     }
+
     /**
      * Provides a blocking operation until the resource has reached a particular state. The method
      * will enter a loop, executing the callback until TRUE is returned. This provides great
@@ -49,15 +56,20 @@ trait HasWaiterTrait
     public function waitWithCallback(callable $fn, $timeout = 60, $sleepPeriod = 1)
     {
         $startTime = time();
+
         while (true) {
             $this->retrieve();
+
             $response = call_user_func_array($fn, [$this]);
+
             if (true === $response || $this->shouldHalt($timeout, $startTime)) {
                 break;
             }
+
             sleep($sleepPeriod);
         }
     }
+
     /**
      * Internal method used to identify whether a timeout has been exceeded.
      *
@@ -71,8 +83,10 @@ trait HasWaiterTrait
         if (false === $timeout) {
             return false;
         }
+
         return time() - $startTime >= $timeout;
     }
+
     /**
      * Convenience method providing a blocking operation until the resource transitions to an
      * ``ACTIVE`` status.
@@ -85,9 +99,11 @@ trait HasWaiterTrait
     {
         $this->waitUntil('ACTIVE', $timeout);
     }
+
     public function waitUntilDeleted($timeout = 60, $sleepPeriod = 1)
     {
         $startTime = time();
+
         while (true) {
             try {
                 $this->retrieve();
@@ -97,9 +113,11 @@ trait HasWaiterTrait
                 }
                 throw $e;
             }
+
             if ($this->shouldHalt($timeout, $startTime)) {
                 break;
             }
+
             sleep($sleepPeriod);
         }
     }

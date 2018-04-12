@@ -5,6 +5,7 @@ namespace OpenStack\Networking\v2\Extensions\Layer3;
 use OpenStack\Common\Service\AbstractService;
 use OpenStack\Networking\v2\Extensions\Layer3\Models\FloatingIp;
 use OpenStack\Networking\v2\Extensions\Layer3\Models\Router;
+
 /**
  * @property Api $api
  */
@@ -14,10 +15,12 @@ class Service extends AbstractService
     {
         return $this->model(FloatingIp::class, $info);
     }
+
     private function router(array $info = [])
     {
         return $this->model(Router::class, $info);
     }
+
     /**
      * @param array $options
      *
@@ -27,6 +30,7 @@ class Service extends AbstractService
     {
         return $this->floatingIp()->create($options);
     }
+
     /**
      * @return FloatingIp
      */
@@ -34,6 +38,7 @@ class Service extends AbstractService
     {
         return $this->floatingIp(['id' => $id]);
     }
+
     /**
      * @return \Generator
      */
@@ -41,6 +46,7 @@ class Service extends AbstractService
     {
         return $this->floatingIp()->enumerate($this->api->getFloatingIps(), $options);
     }
+
     /**
      * @param array $options
      *
@@ -50,6 +56,7 @@ class Service extends AbstractService
     {
         return $this->router()->create($options);
     }
+
     /**
      * @return Router
      */
@@ -57,6 +64,7 @@ class Service extends AbstractService
     {
         return $this->router(['id' => $id]);
     }
+
     /**
      * @param array $options
      *

@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Identity\v3\Models;
 
 use OpenStack\Common\Resource\OperatorResource;
@@ -8,6 +10,7 @@ use OpenStack\Common\Resource\Deletable;
 use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
+
 /**
  * @property \OpenStack\Identity\v3\Api $api
  */
@@ -15,19 +18,30 @@ class Policy extends OperatorResource implements Creatable, Listable, Retrievabl
 {
     /** @var string */
     public $blob;
+
     /** @var string */
     public $id;
+
     /** @var array */
     public $links;
+
     /** @var string */
     public $projectId;
+
     /** @var string */
     public $type;
+
     /** @var string */
     public $userId;
-    protected $resourceKey = 'policy';
+
+    protected $resourceKey  = 'policy';
     protected $resourcesKey = 'policies';
-    protected $aliases = ['project_id' => 'projectId', 'user_id' => 'userId'];
+
+    protected $aliases = [
+        'project_id' => 'projectId',
+        'user_id'    => 'userId',
+    ];
+
     /**
      * {@inheritdoc}
      *
@@ -36,8 +50,10 @@ class Policy extends OperatorResource implements Creatable, Listable, Retrievabl
     public function create(array $data)
     {
         $response = $this->execute($this->api->postPolicies(), $data);
+
         return $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -46,6 +62,7 @@ class Policy extends OperatorResource implements Creatable, Listable, Retrievabl
         $response = $this->execute($this->api->getPolicy(), ['id' => $this->id]);
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -54,6 +71,7 @@ class Policy extends OperatorResource implements Creatable, Listable, Retrievabl
         $response = $this->executeWithState($this->api->patchPolicy());
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */

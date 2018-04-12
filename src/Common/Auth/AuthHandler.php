@@ -1,9 +1,12 @@
 <?php
 
+
+
 namespace OpenStack\Common\Auth;
 
 use function GuzzleHttp\Psr7\modify_request;
 use Psr\Http\Message\RequestInterface;
+
 /**
  * This class is responsible for three tasks:.
  *
@@ -15,20 +18,24 @@ class AuthHandler
 {
     /** @var callable */
     private $nextHandler;
+
     /** @var callable */
     private $tokenGenerator;
+
     /** @var Token */
     private $token;
+
     /**
      * @param callable $nextHandler
      * @param callable $tokenGenerator
      */
     public function __construct(callable $nextHandler, callable $tokenGenerator, Token $token = null)
     {
-        $this->nextHandler = $nextHandler;
+        $this->nextHandler    = $nextHandler;
         $this->tokenGenerator = $tokenGenerator;
-        $this->token = $token;
+        $this->token          = $token;
     }
+
     /**
      * This method is invoked before every HTTP request is sent to the API. When this happens, it
      * checks to see whether a token is set and valid, and then sets the ``X-Auth-Token`` header
@@ -42,15 +49,20 @@ class AuthHandler
     public function __invoke(RequestInterface $request, array $options)
     {
         $fn = $this->nextHandler;
+
         if ($this->shouldIgnore($request)) {
             return $fn($request, $options);
         }
+
         if (!$this->token || $this->token->hasExpired()) {
             $this->token = call_user_func($this->tokenGenerator);
         }
+
         $modify = ['set_headers' => ['X-Auth-Token' => $this->token->getId()]];
+
         return $fn(modify_request($request, $modify), $options);
     }
+
     /**
      * Internal method which prevents infinite recursion. For certain requests, like the initial
      * auth call itself, we do NOT want to send a token.

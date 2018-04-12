@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack;
 
 use GuzzleHttp\Client;
@@ -8,6 +10,7 @@ use GuzzleHttp\Middleware as GuzzleMiddleware;
 use OpenStack\Common\Service\Builder;
 use OpenStack\Common\Transport\Utils;
 use OpenStack\Identity\v3\Service;
+
 /**
  * This class is the primary entry point for working with the SDK. It allows for the easy creation
  * of OpenStack services.
@@ -16,6 +19,7 @@ class OpenStack
 {
     /** @var Builder */
     private $builder;
+
     /**
      * @param array $options User-defined options
      *
@@ -36,8 +40,10 @@ class OpenStack
         if (!isset($options['identityService'])) {
             $options['identityService'] = $this->getDefaultIdentityService($options);
         }
+
         $this->builder = $builder ?: new Builder($options, 'OpenStack');
     }
+
     /**
      * @param array $options
      *
@@ -48,16 +54,28 @@ class OpenStack
         if (!isset($options['authUrl'])) {
             throw new \InvalidArgumentException("'authUrl' is a required option");
         }
+
         $stack = HandlerStack::create();
-        if (!empty($options['debugLog']) && !empty($options['logger']) && !empty($options['messageFormatter'])) {
+
+        if (!empty($options['debugLog'])
+            && !empty($options['logger'])
+            && !empty($options['messageFormatter'])
+        ) {
             $stack->push(GuzzleMiddleware::log($options['logger'], $options['messageFormatter']));
         }
-        $clientOptions = ['base_uri' => Utils::normalizeUrl($options['authUrl']), 'handler' => $stack];
+
+        $clientOptions = [
+            'base_uri' => Utils::normalizeUrl($options['authUrl']),
+            'handler'  => $stack,
+        ];
+
         if (isset($options['requestOptions'])) {
             $clientOptions = array_merge($options['requestOptions'], $clientOptions);
         }
+
         return Service::factory(new Client($clientOptions));
     }
+
     /**
      * Creates a new Compute v2 service.
      *
@@ -68,8 +86,10 @@ class OpenStack
     public function computeV2(array $options = [])
     {
         $defaults = ['catalogName' => 'nova', 'catalogType' => 'compute'];
+
         return $this->builder->createService('Compute\\v2', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Networking v2 service.
      *
@@ -80,8 +100,10 @@ class OpenStack
     public function networkingV2(array $options = [])
     {
         $defaults = ['catalogName' => 'neutron', 'catalogType' => 'network'];
+
         return $this->builder->createService('Networking\\v2', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Networking v2 Layer 3 service.
      *
@@ -92,8 +114,10 @@ class OpenStack
     public function networkingV2ExtLayer3(array $options = [])
     {
         $defaults = ['catalogName' => 'neutron', 'catalogType' => 'network'];
+
         return $this->builder->createService('Networking\\v2\\Extensions\\Layer3', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Networking v2 Layer 3 service.
      *
@@ -104,8 +128,10 @@ class OpenStack
     public function networkingV2ExtSecGroups(array $options = [])
     {
         $defaults = ['catalogName' => 'neutron', 'catalogType' => 'network'];
+
         return $this->builder->createService('Networking\\v2\\Extensions\\SecurityGroups', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Identity v2 service.
      *
@@ -116,8 +142,10 @@ class OpenStack
     public function identityV2(array $options = [])
     {
         $defaults = ['catalogName' => 'keystone', 'catalogType' => 'identity'];
+
         return $this->builder->createService('Identity\\v2', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Identity v3 service.
      *
@@ -128,8 +156,10 @@ class OpenStack
     public function identityV3(array $options = [])
     {
         $defaults = ['catalogName' => 'keystone', 'catalogType' => 'identity'];
+
         return $this->builder->createService('Identity\\v3', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Object Store v1 service.
      *
@@ -140,8 +170,10 @@ class OpenStack
     public function objectStoreV1(array $options = [])
     {
         $defaults = ['catalogName' => 'swift', 'catalogType' => 'object-store'];
+
         return $this->builder->createService('ObjectStore\\v1', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Block Storage v2 service.
      *
@@ -152,8 +184,10 @@ class OpenStack
     public function blockStorageV2(array $options = [])
     {
         $defaults = ['catalogName' => 'cinderv2', 'catalogType' => 'volumev2'];
+
         return $this->builder->createService('BlockStorage\\v2', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Images v2 service.
      *
@@ -164,8 +198,10 @@ class OpenStack
     public function imagesV2(array $options = [])
     {
         $defaults = ['catalogName' => 'glance', 'catalogType' => 'image'];
+
         return $this->builder->createService('Images\\v2', array_merge($defaults, $options));
     }
+
     /**
      * Creates a new Gnocchi Metric service v1.
      *
@@ -176,6 +212,7 @@ class OpenStack
     public function metricGnocchiV1(array $options = [])
     {
         $defaults = ['catalogName' => 'gnocchi', 'catalogType' => 'metric'];
+
         return $this->builder->createService('Metric\\v1\\Gnocchi', array_merge($defaults, $options));
     }
 }

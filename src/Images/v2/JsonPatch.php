@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Images\v2;
 
 class JsonPatch extends \OpenStack\Common\JsonSchema\JsonPatch
@@ -11,8 +13,10 @@ class JsonPatch extends \OpenStack\Common\JsonSchema\JsonPatch
                 unset($diff[$i]);
             }
         }
+
         return $diff;
     }
+
     /**
      * {@inheritdoc}
      *
@@ -22,13 +26,15 @@ class JsonPatch extends \OpenStack\Common\JsonSchema\JsonPatch
     protected function handleObject(\stdClass $srcStruct, \stdClass $desStruct, $path)
     {
         $changes = [];
+
         foreach ($desStruct as $key => $val) {
             if (!property_exists($srcStruct, $key)) {
                 $changes[] = $this->makePatch(self::OP_ADD, $this->path($path, $key), $val);
-            } elseif ($srcStruct->{$key} != $val) {
-                $changes = array_merge($changes, $this->makeDiff($srcStruct->{$key}, $val, $this->path($path, $key)));
+            } elseif ($srcStruct->$key != $val) {
+                $changes = array_merge($changes, $this->makeDiff($srcStruct->$key, $val, $this->path($path, $key)));
             }
         }
+
         if ($this->shouldPartiallyReplace($desStruct, $srcStruct)) {
             foreach ($srcStruct as $key => $val) {
                 if (!property_exists($desStruct, $key)) {
@@ -36,11 +42,14 @@ class JsonPatch extends \OpenStack\Common\JsonSchema\JsonPatch
                 }
             }
         }
+
         return $changes;
     }
+
     protected function handleArray(array $srcStruct, array $desStruct, $path)
     {
         $changes = [];
+
         if ($srcStruct != $desStruct) {
             if ($diff = $this->arrayDiff($desStruct, $srcStruct)) {
                 $changes[] = $this->makePatch(self::OP_REPLACE, $path, $desStruct);
@@ -51,6 +60,7 @@ class JsonPatch extends \OpenStack\Common\JsonSchema\JsonPatch
                 }
             }
         }
+
         return $changes;
     }
 }

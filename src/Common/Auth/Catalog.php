@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Common\Auth;
 
 interface Catalog

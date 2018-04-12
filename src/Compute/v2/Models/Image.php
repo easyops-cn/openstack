@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Compute\v2\Models;
 
 use OpenStack\Common\Resource\Alias;
@@ -10,6 +12,7 @@ use OpenStack\Common\Resource\Listable;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Transport\Utils;
 use Psr\Http\Message\ResponseInterface;
+
 /**
  * Represents a Compute v2 Image.
  *
@@ -19,33 +22,48 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
 {
     /** @var string */
     public $id;
+
     /** @var array */
     public $links;
+
     /** @var array */
     public $metadata;
+
     /** @var int */
     public $minDisk;
+
     /** @var int */
     public $minRam;
+
     /** @var string */
     public $name;
+
     /** @var string */
     public $progress;
+
     /** @var string */
     public $status;
+
     /** @var \DateTimeImmutable */
     public $created;
+
     /** @var \DateTimeImmutable */
     public $updated;
-    protected $resourceKey = 'image';
+
+    protected $resourceKey  = 'image';
     protected $resourcesKey = 'images';
+
     /**
      * {@inheritdoc}
      */
     protected function getAliases()
     {
-        return parent::getAliases() + ['created' => new Alias('created', \DateTimeImmutable::class), 'updated' => new Alias('updated', \DateTimeImmutable::class)];
+        return parent::getAliases() + [
+            'created' => new Alias('created', \DateTimeImmutable::class),
+            'updated' => new Alias('updated', \DateTimeImmutable::class),
+        ];
     }
+
     /**
      * {@inheritdoc}
      */
@@ -54,6 +72,7 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
         $response = $this->execute($this->api->getImage(), ['id' => (string) $this->id]);
         $this->populateFromResponse($response);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -61,6 +80,7 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
     {
         $this->execute($this->api->deleteImage(), ['id' => (string) $this->id]);
     }
+
     /**
      * Retrieves metadata from the API.
      *
@@ -69,8 +89,10 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
     public function getMetadata()
     {
         $response = $this->execute($this->api->getImageMetadata(), ['id' => $this->id]);
+
         return $this->parseMetadata($response);
     }
+
     /**
      * Resets all the metadata for this image with the values provided. All existing metadata keys
      * will either be replaced or removed.
@@ -79,9 +101,10 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
      */
     public function resetMetadata(array $metadata)
     {
-        $response = $this->execute($this->api->putImageMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
+        $response       = $this->execute($this->api->putImageMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * Merges the existing metadata for the image with the values provided. Any existing keys
      * referenced in the user options will be replaced with the user's new values. All other
@@ -91,9 +114,10 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
      */
     public function mergeMetadata(array $metadata)
     {
-        $response = $this->execute($this->api->postImageMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
+        $response       = $this->execute($this->api->postImageMetadata(), ['id' => $this->id, 'metadata' => $metadata]);
         $this->metadata = $this->parseMetadata($response);
     }
+
     /**
      * Retrieve the value for a specific metadata key.
      *
@@ -103,11 +127,13 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
      */
     public function getMetadataItem($key)
     {
-        $response = $this->execute($this->api->getImageMetadataKey(), ['id' => $this->id, 'key' => $key]);
-        $value = $this->parseMetadata($response)[$key];
+        $response             = $this->execute($this->api->getImageMetadataKey(), ['id' => $this->id, 'key' => $key]);
+        $value                = $this->parseMetadata($response)[$key];
         $this->metadata[$key] = $value;
+
         return $value;
     }
+
     /**
      * Remove a specific metadata key.
      *
@@ -118,8 +144,10 @@ class Image extends OperatorResource implements Listable, Retrievable, Deletable
         if (isset($this->metadata[$key])) {
             unset($this->metadata[$key]);
         }
+
         $this->execute($this->api->deleteImageMetadataKey(), ['id' => $this->id, 'key' => $key]);
     }
+
     public function parseMetadata(ResponseInterface $response)
     {
         return Utils::jsonDecode($response)['metadata'];

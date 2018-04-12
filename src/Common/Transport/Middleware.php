@@ -1,5 +1,7 @@
 <?php
 
+
+
 namespace OpenStack\Common\Transport;
 
 use GuzzleHttp\MessageFormatter;
@@ -10,6 +12,7 @@ use OpenStack\Common\Error\Builder;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+
 final class Middleware
 {
     /**
@@ -18,16 +21,19 @@ final class Middleware
     public static function httpErrors()
     {
         return function (callable $handler) {
-            return function ($request, array $options) use($handler) {
-                return $handler($request, $options)->then(function (ResponseInterface $response) use($request, $handler) {
-                    if ($response->getStatusCode() < 400) {
-                        return $response;
+            return function ($request, array $options) use ($handler) {
+                return $handler($request, $options)->then(
+                    function (ResponseInterface $response) use ($request, $handler) {
+                        if ($response->getStatusCode() < 400) {
+                            return $response;
+                        }
+                        throw (new Builder())->httpError($request, $response);
                     }
-                    throw (new Builder())->httpError($request, $response);
-                });
+                );
             };
         };
     }
+
     /**
      * @param callable $tokenGenerator
      * @param Token    $token
@@ -36,10 +42,11 @@ final class Middleware
      */
     public static function authHandler(callable $tokenGenerator, Token $token = null)
     {
-        return function (callable $handler) use($tokenGenerator, $token) {
+        return function (callable $handler) use ($tokenGenerator, $token) {
             return new AuthHandler($handler, $tokenGenerator, $token);
         };
     }
+
     /**
      * @codeCoverageIgnore
      */
@@ -47,6 +54,7 @@ final class Middleware
     {
         return GuzzleMiddleware::history($container);
     }
+
     /**
      * @codeCoverageIgnore
      */
@@ -54,6 +62,7 @@ final class Middleware
     {
         return GuzzleMiddleware::retry($decider, $delay);
     }
+
     /**
      * @codeCoverageIgnore
      */
@@ -61,6 +70,7 @@ final class Middleware
     {
         return GuzzleMiddleware::log($logger, $formatter, $logLevel);
     }
+
     /**
      * @codeCoverageIgnore
      */
@@ -68,6 +78,7 @@ final class Middleware
     {
         return GuzzleMiddleware::prepareBody();
     }
+
     /**
      * @codeCoverageIgnore
      */
@@ -75,6 +86,7 @@ final class Middleware
     {
         return GuzzleMiddleware::mapRequest($fn);
     }
+
     /**
      * @codeCoverageIgnore
      */

@@ -8,6 +8,7 @@ class DateTime extends \DateTime
     {
         return new static($time);
     }
+
     public function toIso8601()
     {
         return $this->format(self::ISO8601);

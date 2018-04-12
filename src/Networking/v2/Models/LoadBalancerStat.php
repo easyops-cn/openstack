@@ -1,9 +1,12 @@
 <?php
 
+
+
 namespace OpenStack\Networking\v2\Models;
 
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\OperatorResource;
+
 /**
  * Represents Neutron v2 LoadBalancer Stats.
  *
@@ -15,24 +18,37 @@ class LoadBalancerStat extends OperatorResource implements Retrievable
      * @var string
      */
     public $bytesIn;
+
     /**
      * @var string
      */
     public $bytesOut;
+
     /**
      * @var int
      */
     public $totalConnections;
+
     /**
      * @var int
      */
     public $activeConnections;
+
     /**
      * @var string
      */
     public $loadbalancerId;
+
     protected $resourceKey = 'stats';
-    protected $aliases = ['bytes_in' => 'bytesIn', 'bytes_out' => 'bytesOut', 'total_connections' => 'totalConnections', 'active_connections' => 'activeConnections', 'loadbalancer_id' => 'loadbalancerId'];
+
+    protected $aliases = [
+        'bytes_in'           => 'bytesIn',
+        'bytes_out'          => 'bytesOut',
+        'total_connections'  => 'totalConnections',
+        'active_connections' => 'activeConnections',
+        'loadbalancer_id'    => 'loadbalancerId',
+    ];
+
     /**
      * {@inheritdoc}
      */
