@@ -1,11 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Compute\v2;
 
 use OpenStack\Common\Api\AbstractApi;
-
 /**
  * A representation of the Compute (Nova) v2 REST API.
  *
@@ -17,874 +14,298 @@ class Api extends AbstractApi
     {
         $this->params = new Params();
     }
-
-    public function getLimits(): array
+    public function getLimits()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'limits',
-            'params' => [],
-        ];
+        return ['method' => 'GET', 'path' => 'limits', 'params' => []];
     }
-
-    public function getFlavors(): array
+    public function getFlavors()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'flavors',
-            'params' => [
-                'limit'   => $this->params->limit(),
-                'marker'  => $this->params->marker(),
-                'minDisk' => $this->params->minDisk(),
-                'minRam'  => $this->params->minRam(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'flavors', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker(), 'minDisk' => $this->params->minDisk(), 'minRam' => $this->params->minRam()]];
     }
-
-    public function getFlavorsDetail(): array
+    public function getFlavorsDetail()
     {
         $op = $this->getFlavors();
         $op['path'] .= '/detail';
-
         return $op;
     }
-
-    public function getFlavor(): array
+    public function getFlavor()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'flavors/{id}',
-            'params' => ['id' => $this->params->urlId('flavor')],
-        ];
+        return ['method' => 'GET', 'path' => 'flavors/{id}', 'params' => ['id' => $this->params->urlId('flavor')]];
     }
-
-    public function postFlavors(): array
+    public function postFlavors()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'flavors',
-            'jsonKey' => 'flavor',
-            'params'  => [
-                'id'    => $this->notRequired($this->params->id('flavor')),
-                'name'  => $this->isRequired($this->params->name('flavor')),
-                'ram'   => $this->params->flavorRam(),
-                'vcpus' => $this->params->flavorVcpus(),
-                'swap'  => $this->params->flavorSwap(),
-                'disk'  => $this->params->flavorDisk(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'flavors', 'jsonKey' => 'flavor', 'params' => ['id' => $this->notRequired($this->params->id('flavor')), 'name' => $this->isRequired($this->params->name('flavor')), 'ram' => $this->params->flavorRam(), 'vcpus' => $this->params->flavorVcpus(), 'swap' => $this->params->flavorSwap(), 'disk' => $this->params->flavorDisk()]];
     }
-
-    public function deleteFlavor(): array
+    public function deleteFlavor()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'flavors/{id}',
-            'params' => [
-                'id' => $this->params->idPath(),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'flavors/{id}', 'params' => ['id' => $this->params->idPath()]];
     }
-
-    public function getImages(): array
+    public function getImages()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'images',
-            'params' => [
-                'limit'        => $this->params->limit(),
-                'marker'       => $this->params->marker(),
-                'name'         => $this->params->flavorName(),
-                'changesSince' => $this->params->filterChangesSince('image'),
-                'server'       => $this->params->flavorServer(),
-                'status'       => $this->params->filterStatus('image'),
-                'type'         => $this->params->flavorType(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'images', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker(), 'name' => $this->params->flavorName(), 'changesSince' => $this->params->filterChangesSince('image'), 'server' => $this->params->flavorServer(), 'status' => $this->params->filterStatus('image'), 'type' => $this->params->flavorType()]];
     }
-
-    public function getImagesDetail(): array
+    public function getImagesDetail()
     {
         $op = $this->getImages();
         $op['path'] .= '/detail';
-
         return $op;
     }
-
-    public function getImage(): array
+    public function getImage()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'images/{id}',
-            'params' => ['id' => $this->params->urlId('image')],
-        ];
+        return ['method' => 'GET', 'path' => 'images/{id}', 'params' => ['id' => $this->params->urlId('image')]];
     }
-
-    public function deleteImage(): array
+    public function deleteImage()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'images/{id}',
-            'params' => ['id' => $this->params->urlId('image')],
-        ];
+        return ['method' => 'DELETE', 'path' => 'images/{id}', 'params' => ['id' => $this->params->urlId('image')]];
     }
-
-    public function getImageMetadata(): array
+    public function getImageMetadata()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'images/{id}/metadata',
-            'params' => ['id' => $this->params->urlId('image')],
-        ];
+        return ['method' => 'GET', 'path' => 'images/{id}/metadata', 'params' => ['id' => $this->params->urlId('image')]];
     }
-
-    public function putImageMetadata(): array
+    public function putImageMetadata()
     {
-        return [
-            'method' => 'PUT',
-            'path'   => 'images/{id}/metadata',
-            'params' => [
-                'id'       => $this->params->urlId('image'),
-                'metadata' => $this->params->metadata(),
-            ],
-        ];
+        return ['method' => 'PUT', 'path' => 'images/{id}/metadata', 'params' => ['id' => $this->params->urlId('image'), 'metadata' => $this->params->metadata()]];
     }
-
-    public function postImageMetadata(): array
+    public function postImageMetadata()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'images/{id}/metadata',
-            'params' => [
-                'id'       => $this->params->urlId('image'),
-                'metadata' => $this->params->metadata(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'images/{id}/metadata', 'params' => ['id' => $this->params->urlId('image'), 'metadata' => $this->params->metadata()]];
     }
-
-    public function getImageMetadataKey(): array
+    public function getImageMetadataKey()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'images/{id}/metadata/{key}',
-            'params' => [
-                'id'  => $this->params->urlId('image'),
-                'key' => $this->params->key(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'images/{id}/metadata/{key}', 'params' => ['id' => $this->params->urlId('image'), 'key' => $this->params->key()]];
     }
-
-    public function deleteImageMetadataKey(): array
+    public function deleteImageMetadataKey()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'images/{id}/metadata/{key}',
-            'params' => [
-                'id'  => $this->params->urlId('image'),
-                'key' => $this->params->key(),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'images/{id}/metadata/{key}', 'params' => ['id' => $this->params->urlId('image'), 'key' => $this->params->key()]];
     }
-
-    public function postServer(): array
+    public function postServer()
     {
-        return [
-            'path'    => 'servers',
-            'method'  => 'POST',
-            'jsonKey' => 'server',
-            'params'  => [
-                'imageId'            => $this->notRequired($this->params->imageId()),
-                'flavorId'           => $this->params->flavorId(),
-                'personality'        => $this->params->personality(),
-                'metadata'           => $this->notRequired($this->params->metadata()),
-                'name'               => $this->isRequired($this->params->name('server')),
-                'securityGroups'     => $this->params->securityGroups(),
-                'userData'           => $this->params->userData(),
-                'availabilityZone'   => $this->params->availabilityZone(),
-                'networks'           => $this->params->networks(),
-                'blockDeviceMapping' => $this->params->blockDeviceMapping(),
-                'keyName'            => $this->params->keyName(),
-            ],
-        ];
+        return ['path' => 'servers', 'method' => 'POST', 'jsonKey' => 'server', 'params' => ['imageId' => $this->notRequired($this->params->imageId()), 'flavorId' => $this->params->flavorId(), 'personality' => $this->params->personality(), 'metadata' => $this->notRequired($this->params->metadata()), 'name' => $this->isRequired($this->params->name('server')), 'securityGroups' => $this->params->securityGroups(), 'userData' => $this->params->userData(), 'availabilityZone' => $this->params->availabilityZone(), 'networks' => $this->params->networks(), 'blockDeviceMapping' => $this->params->blockDeviceMapping(), 'keyName' => $this->params->keyName()]];
     }
-
-    public function getServers(): array
+    public function getServers()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers',
-            'params' => [
-                'limit'        => $this->params->limit(),
-                'marker'       => $this->params->marker(),
-                'changesSince' => $this->params->filterChangesSince('server'),
-                'imageId'      => $this->params->filterImage(),
-                'flavorId'     => $this->params->filterFlavor(),
-                'name'         => $this->params->filterName(),
-                'status'       => $this->params->filterStatus('server'),
-                'host'         => $this->params->filterHost(),
-                'allTenants'   => $this->params->allTenants(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker(), 'changesSince' => $this->params->filterChangesSince('server'), 'imageId' => $this->params->filterImage(), 'flavorId' => $this->params->filterFlavor(), 'name' => $this->params->filterName(), 'status' => $this->params->filterStatus('server'), 'host' => $this->params->filterHost(), 'allTenants' => $this->params->allTenants()]];
     }
-
-    public function getServersDetail(): array
+    public function getServersDetail()
     {
         $definition = $this->getServers();
         $definition['path'] .= '/detail';
-
         return $definition;
     }
-
-    public function getServer(): array
+    public function getServer()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}',
-            'params' => [
-                'id' => $this->params->urlId('server'),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function putServer(): array
+    public function putServer()
     {
-        return [
-            'method'  => 'PUT',
-            'path'    => 'servers/{id}',
-            'jsonKey' => 'server',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'ipv4' => $this->params->ipv4(),
-                'ipv6' => $this->params->ipv6(),
-                'name' => $this->params->name('server'),
-            ],
-        ];
+        return ['method' => 'PUT', 'path' => 'servers/{id}', 'jsonKey' => 'server', 'params' => ['id' => $this->params->urlId('server'), 'ipv4' => $this->params->ipv4(), 'ipv6' => $this->params->ipv6(), 'name' => $this->params->name('server')]];
     }
-
-    public function deleteServer(): array
+    public function deleteServer()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'servers/{id}',
-            'params' => ['id' => $this->params->urlId('server')],
-        ];
+        return ['method' => 'DELETE', 'path' => 'servers/{id}', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function changeServerPassword(): array
+    public function changeServerPassword()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'changePassword',
-            'params'  => [
-                'id'       => $this->params->urlId('server'),
-                'password' => $this->params->password(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'changePassword', 'params' => ['id' => $this->params->urlId('server'), 'password' => $this->params->password()]];
     }
-
-    public function resetServerState(): array
+    public function resetServerState()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'         => $this->params->urlId('server'),
-                'resetState' => $this->params->resetState(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'resetState' => $this->params->resetState()]];
     }
-
-    public function rebootServer(): array
+    public function rebootServer()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'reboot',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'type' => $this->params->rebootType(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'reboot', 'params' => ['id' => $this->params->urlId('server'), 'type' => $this->params->rebootType()]];
     }
-
-    public function startServer(): array
+    public function startServer()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'       => $this->params->urlId('server'),
-                'os-start' => $this->params->nullAction(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'os-start' => $this->params->nullAction()]];
     }
-
-    public function stopServer(): array
+    public function stopServer()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'      => $this->params->urlId('server'),
-                'os-stop' => $this->params->nullAction(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'os-stop' => $this->params->nullAction()]];
     }
-
-    public function rebuildServer(): array
+    public function rebuildServer()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'rebuild',
-            'params'  => [
-                'id'          => $this->params->urlId('server'),
-                'ipv4'        => $this->params->ipv4(),
-                'ipv6'        => $this->params->ipv6(),
-                'imageId'     => $this->params->imageId(),
-                'personality' => $this->params->personality(),
-                'name'        => $this->params->name('server'),
-                'metadata'    => $this->notRequired($this->params->metadata()),
-                'adminPass'   => $this->params->password(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'rebuild', 'params' => ['id' => $this->params->urlId('server'), 'ipv4' => $this->params->ipv4(), 'ipv6' => $this->params->ipv6(), 'imageId' => $this->params->imageId(), 'personality' => $this->params->personality(), 'name' => $this->params->name('server'), 'metadata' => $this->notRequired($this->params->metadata()), 'adminPass' => $this->params->password()]];
     }
-
-    public function rescueServer(): array
+    public function rescueServer()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'rescue',
-            'params'  => [
-                'id'        => $this->params->urlId('server'),
-                'imageId'   => $this->params->rescueImageId(),
-                'adminPass' => $this->notRequired($this->params->password()),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'rescue', 'params' => ['id' => $this->params->urlId('server'), 'imageId' => $this->params->rescueImageId(), 'adminPass' => $this->notRequired($this->params->password())]];
     }
-
-    public function unrescueServer(): array
+    public function unrescueServer()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'       => $this->params->urlId('server'),
-                'unrescue' => $this->params->nullAction(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'unrescue' => $this->params->nullAction()]];
     }
-
-    public function resizeServer(): array
+    public function resizeServer()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'resize',
-            'params'  => [
-                'id'       => $this->params->urlId('server'),
-                'flavorId' => $this->params->flavorId(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'resize', 'params' => ['id' => $this->params->urlId('server'), 'flavorId' => $this->params->flavorId()]];
     }
-
-    public function confirmServerResize(): array
+    public function confirmServerResize()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'            => $this->params->urlId('server'),
-                'confirmResize' => $this->params->nullAction(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'confirmResize' => $this->params->nullAction()]];
     }
-
-    public function revertServerResize(): array
+    public function revertServerResize()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'           => $this->params->urlId('server'),
-                'revertResize' => $this->params->nullAction(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'revertResize' => $this->params->nullAction()]];
     }
-
-    public function getConsoleOutput(): array
+    public function getConsoleOutput()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'os-getConsoleOutput',
-            'params'  => [
-                'id'     => $this->params->urlId('server'),
-                'length' => $this->notRequired($this->params->consoleLogLength()),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'os-getConsoleOutput', 'params' => ['id' => $this->params->urlId('server'), 'length' => $this->notRequired($this->params->consoleLogLength())]];
     }
-
-    public function getAllConsoleOutput(): array
+    public function getAllConsoleOutput()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/action',
-            'params' => [
-                'id'                  => $this->params->urlId('server'),
-                'os-getConsoleOutput' => $this->params->emptyObject(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'params' => ['id' => $this->params->urlId('server'), 'os-getConsoleOutput' => $this->params->emptyObject()]];
     }
-
-    public function createServerImage(): array
+    public function createServerImage()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'createImage',
-            'params'  => [
-                'id'       => $this->params->urlId('server'),
-                'metadata' => $this->notRequired($this->params->metadata()),
-                'name'     => $this->isRequired($this->params->name('server')),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'createImage', 'params' => ['id' => $this->params->urlId('server'), 'metadata' => $this->notRequired($this->params->metadata()), 'name' => $this->isRequired($this->params->name('server'))]];
     }
-
-    public function getVncConsole(): array
+    public function getVncConsole()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'os-getVNCConsole',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'type' => $this->params->consoleType(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'os-getVNCConsole', 'params' => ['id' => $this->params->urlId('server'), 'type' => $this->params->consoleType()]];
     }
-
-    public function getSpiceConsole(): array
+    public function getSpiceConsole()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'os-getSPICEConsole',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'type' => $this->params->consoleType(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'os-getSPICEConsole', 'params' => ['id' => $this->params->urlId('server'), 'type' => $this->params->consoleType()]];
     }
-
-    public function getSerialConsole(): array
+    public function getSerialConsole()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'os-getSerialConsole',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'type' => $this->params->consoleType(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'os-getSerialConsole', 'params' => ['id' => $this->params->urlId('server'), 'type' => $this->params->consoleType()]];
     }
-
-    public function getRDPConsole(): array
+    public function getRDPConsole()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'os-getRDPConsole',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'type' => $this->params->consoleType(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'os-getRDPConsole', 'params' => ['id' => $this->params->urlId('server'), 'type' => $this->params->consoleType()]];
     }
-
-    public function getAddresses(): array
+    public function getAddresses()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}/ips',
-            'params' => ['id' => $this->params->urlId('server')],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/ips', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function getAddressesByNetwork(): array
+    public function getAddressesByNetwork()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}/ips/{networkLabel}',
-            'params' => [
-                'id'           => $this->params->urlId('server'),
-                'networkLabel' => $this->params->networkLabel(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/ips/{networkLabel}', 'params' => ['id' => $this->params->urlId('server'), 'networkLabel' => $this->params->networkLabel()]];
     }
-
-    public function getInterfaceAttachments(): array
+    public function getInterfaceAttachments()
     {
-        return [
-            'method'  => 'GET',
-            'path'    => 'servers/{id}/os-interface',
-            'jsonKey' => 'interfaceAttachments',
-            'params'  => [
-                'id' => $this->params->urlId('server'),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/os-interface', 'jsonKey' => 'interfaceAttachments', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function getInterfaceAttachment(): array
+    public function getInterfaceAttachment()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}/os-interface/{portId}',
-            'params' => [
-                'id'     => $this->params->urlId('server'),
-                'portId' => $this->params->portId(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/os-interface/{portId}', 'params' => ['id' => $this->params->urlId('server'), 'portId' => $this->params->portId()]];
     }
-
-    public function postInterfaceAttachment(): array
+    public function postInterfaceAttachment()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/os-interface',
-            'jsonKey' => 'interfaceAttachment',
-            'params'  => [
-                'id'               => $this->params->urlId('server'),
-                'portId'           => $this->notRequired($this->params->portId()),
-                'networkId'        => $this->notRequired($this->params->networkId()),
-                'fixedIpAddresses' => $this->notRequired($this->params->fixedIpAddresses()),
-                'tag'              => $this->notRequired($this->params->tag()),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/os-interface', 'jsonKey' => 'interfaceAttachment', 'params' => ['id' => $this->params->urlId('server'), 'portId' => $this->notRequired($this->params->portId()), 'networkId' => $this->notRequired($this->params->networkId()), 'fixedIpAddresses' => $this->notRequired($this->params->fixedIpAddresses()), 'tag' => $this->notRequired($this->params->tag())]];
     }
-
-    public function deleteInterfaceAttachment(): array
+    public function deleteInterfaceAttachment()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'servers/{id}/os-interface/{portId}',
-            'params' => [
-                'id'     => $this->params->urlId('image'),
-                'portId' => $this->params->portId(),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'servers/{id}/os-interface/{portId}', 'params' => ['id' => $this->params->urlId('image'), 'portId' => $this->params->portId()]];
     }
-
-    public function getServerMetadata(): array
+    public function getServerMetadata()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}/metadata',
-            'params' => ['id' => $this->params->urlId('server')],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/metadata', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function putServerMetadata(): array
+    public function putServerMetadata()
     {
-        return [
-            'method' => 'PUT',
-            'path'   => 'servers/{id}/metadata',
-            'params' => [
-                'id'       => $this->params->urlId('server'),
-                'metadata' => $this->params->metadata(),
-            ],
-        ];
+        return ['method' => 'PUT', 'path' => 'servers/{id}/metadata', 'params' => ['id' => $this->params->urlId('server'), 'metadata' => $this->params->metadata()]];
     }
-
-    public function postServerMetadata(): array
+    public function postServerMetadata()
     {
-        return [
-            'method' => 'POST',
-            'path'   => 'servers/{id}/metadata',
-            'params' => [
-                'id'       => $this->params->urlId('server'),
-                'metadata' => $this->params->metadata(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/metadata', 'params' => ['id' => $this->params->urlId('server'), 'metadata' => $this->params->metadata()]];
     }
-
-    public function getServerMetadataKey(): array
+    public function getServerMetadataKey()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'servers/{id}/metadata/{key}',
-            'params' => [
-                'id'  => $this->params->urlId('server'),
-                'key' => $this->params->key(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/metadata/{key}', 'params' => ['id' => $this->params->urlId('server'), 'key' => $this->params->key()]];
     }
-
-    public function deleteServerMetadataKey(): array
+    public function deleteServerMetadataKey()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'servers/{id}/metadata/{key}',
-            'params' => [
-                'id'  => $this->params->urlId('server'),
-                'key' => $this->params->key(),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'servers/{id}/metadata/{key}', 'params' => ['id' => $this->params->urlId('server'), 'key' => $this->params->key()]];
     }
-
-    public function getKeypair(): array
+    public function getKeypair()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-keypairs/{name}',
-            'params' => [
-                'name'   => $this->isRequired($this->params->keypairName()),
-                'userId' => $this->params->userId(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-keypairs/{name}', 'params' => ['name' => $this->isRequired($this->params->keypairName()), 'userId' => $this->params->userId()]];
     }
-
-    public function getKeypairs(): array
+    public function getKeypairs()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-keypairs',
-            'params' => [
-                'userId' => $this->params->userId(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-keypairs', 'params' => ['userId' => $this->params->userId()]];
     }
-
-    public function postKeypair(): array
+    public function postKeypair()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'os-keypairs',
-            'jsonKey' => 'keypair',
-            'params'  => [
-                'name'      => $this->isRequired($this->params->name('keypair')),
-                'publicKey' => $this->params->keypairPublicKey(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'os-keypairs', 'jsonKey' => 'keypair', 'params' => ['name' => $this->isRequired($this->params->name('keypair')), 'publicKey' => $this->params->keypairPublicKey()]];
     }
-
-    public function deleteKeypair(): array
+    public function deleteKeypair()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'os-keypairs/{name}',
-            'params' => [
-                'name' => $this->isRequired($this->params->keypairName()),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'os-keypairs/{name}', 'params' => ['name' => $this->isRequired($this->params->keypairName())]];
     }
-
-    public function postSecurityGroup(): array
+    public function postSecurityGroup()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'addSecurityGroup',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'name' => $this->isRequired($this->params->name('securityGroup')),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'addSecurityGroup', 'params' => ['id' => $this->params->urlId('server'), 'name' => $this->isRequired($this->params->name('securityGroup'))]];
     }
-
-    public function deleteSecurityGroup(): array
+    public function deleteSecurityGroup()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/action',
-            'jsonKey' => 'removeSecurityGroup',
-            'params'  => [
-                'id'   => $this->params->urlId('server'),
-                'name' => $this->isRequired($this->params->name('securityGroup')),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/action', 'jsonKey' => 'removeSecurityGroup', 'params' => ['id' => $this->params->urlId('server'), 'name' => $this->isRequired($this->params->name('securityGroup'))]];
     }
-
-    public function getSecurityGroups(): array
+    public function getSecurityGroups()
     {
-        return [
-            'method'  => 'GET',
-            'path'    => 'servers/{id}/os-security-groups',
-            'jsonKey' => 'security_groups',
-            'params'  => [
-                'id' => $this->params->urlId('server'),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/os-security-groups', 'jsonKey' => 'security_groups', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function getVolumeAttachments(): array
+    public function getVolumeAttachments()
     {
-        return [
-            'method'  => 'GET',
-            'path'    => 'servers/{id}/os-volume_attachments',
-            'jsonKey' => 'volumeAttachments',
-            'params'  => [
-                'id' => $this->params->urlId('server'),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'servers/{id}/os-volume_attachments', 'jsonKey' => 'volumeAttachments', 'params' => ['id' => $this->params->urlId('server')]];
     }
-
-    public function postVolumeAttachments(): array
+    public function postVolumeAttachments()
     {
-        return [
-            'method'  => 'POST',
-            'path'    => 'servers/{id}/os-volume_attachments',
-            'jsonKey' => 'volumeAttachment',
-            'params'  => [
-                'id'       => $this->params->urlId('server'),
-                'volumeId' => $this->params->volumeId(),
-            ],
-        ];
+        return ['method' => 'POST', 'path' => 'servers/{id}/os-volume_attachments', 'jsonKey' => 'volumeAttachment', 'params' => ['id' => $this->params->urlId('server'), 'volumeId' => $this->params->volumeId()]];
     }
-
-    public function deleteVolumeAttachments(): array
+    public function deleteVolumeAttachments()
     {
-        return [
-            'method' => 'DELETE',
-            'path'   => 'servers/{id}/os-volume_attachments/{attachmentId}',
-            'params' => [
-                'id'           => $this->params->urlId('server'),
-                'attachmentId' => $this->params->attachmentId(),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'servers/{id}/os-volume_attachments/{attachmentId}', 'params' => ['id' => $this->params->urlId('server'), 'attachmentId' => $this->params->attachmentId()]];
     }
-
-    public function getHypervisorStatistics(): array
+    public function getHypervisorStatistics()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-hypervisors/statistics',
-            'params' => [
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-hypervisors/statistics', 'params' => []];
     }
-
-    public function getHypervisors(): array
+    public function getHypervisors()
     {
-        return [
-            'method'  => 'GET',
-            'path'    => 'os-hypervisors',
-            'jsonKey' => 'hypervisors',
-            'params'  => [
-                'limit'  => $this->params->limit(),
-                'marker' => $this->params->marker(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-hypervisors', 'jsonKey' => 'hypervisors', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker()]];
     }
-
-    public function getHypervisorsDetail(): array
+    public function getHypervisorsDetail()
     {
         $definition = $this->getHypervisors();
         $definition['path'] .= '/detail';
-
         return $definition;
     }
-
-    public function getHypervisor(): array
+    public function getHypervisor()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-hypervisors/{id}',
-            'params' => ['id' => $this->params->urlId('id')],
-        ];
+        return ['method' => 'GET', 'path' => 'os-hypervisors/{id}', 'params' => ['id' => $this->params->urlId('id')]];
     }
-
-    public function getAvailabilityZones(): array
+    public function getAvailabilityZones()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-availability-zone/detail',
-            'params' => [
-                'limit'  => $this->params->limit(),
-                'marker' => $this->params->marker(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-availability-zone/detail', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker()]];
     }
-
-    public function getHosts(): array
+    public function getHosts()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-hosts',
-            'params' => [
-                'limit'  => $this->params->limit(),
-                'marker' => $this->params->marker(),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-hosts', 'params' => ['limit' => $this->params->limit(), 'marker' => $this->params->marker()]];
     }
-
-    public function getHost(): array
+    public function getHost()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-hosts/{name}',
-            'params' => ['name' => $this->params->urlId('name')],
-        ];
+        return ['method' => 'GET', 'path' => 'os-hosts/{name}', 'params' => ['name' => $this->params->urlId('name')]];
     }
-
-    public function getQuotaSet(): array
+    public function getQuotaSet()
     {
-        return [
-            'method' => 'GET',
-            'path'   => 'os-quota-sets/{tenantId}',
-            'params' => [
-                'tenantId' => $this->params->urlId('quota-sets'),
-            ],
-        ];
+        return ['method' => 'GET', 'path' => 'os-quota-sets/{tenantId}', 'params' => ['tenantId' => $this->params->urlId('quota-sets')]];
     }
-
-    public function getQuotaSetDetail(): array
+    public function getQuotaSetDetail()
     {
         $data = $this->getQuotaSet();
         $data['path'] .= '/detail';
-
         return $data;
     }
-
-    public function deleteQuotaSet(): array
+    public function deleteQuotaSet()
     {
-        return [
-            'method'  => 'DELETE',
-            'path'    => 'os-quota-sets/{tenantId}',
-            'jsonKey' => 'quota_set',
-            'params'  => [
-                'tenantId' => $this->params->urlId('quota-sets'),
-            ],
-        ];
+        return ['method' => 'DELETE', 'path' => 'os-quota-sets/{tenantId}', 'jsonKey' => 'quota_set', 'params' => ['tenantId' => $this->params->urlId('quota-sets')]];
     }
-
-    public function putQuotaSet(): array
+    public function putQuotaSet()
     {
-        return [
-            'method'  => 'PUT',
-            'path'    => 'os-quota-sets/{tenantId}',
-            'jsonKey' => 'quota_set',
-            'params'  => [
-                'tenantId'                 => $this->params->idPath(),
-                'force'                    => $this->notRequired($this->params->quotaSetLimitForce()),
-                'instances'                => $this->notRequired($this->params->quotaSetLimitInstances()),
-                'cores'                    => $this->notRequired($this->params->quotaSetLimitCores()),
-                'fixedIps'                 => $this->notRequired($this->params->quotaSetLimitFixedIps()),
-                'floatingIps'              => $this->notRequired($this->params->quotaSetLimitFloatingIps()),
-                'injectedFileContentBytes' => $this->notRequired($this->params->quotaSetLimitInjectedFileContentBytes()),
-                'injectedFilePathBytes'    => $this->notRequired($this->params->quotaSetLimitInjectedFilePathBytes()),
-                'injectedFiles'            => $this->notRequired($this->params->quotaSetLimitInjectedFiles()),
-                'keyPairs'                 => $this->notRequired($this->params->quotaSetLimitKeyPairs()),
-                'metadataItems'            => $this->notRequired($this->params->quotaSetLimitMetadataItems()),
-                'ram'                      => $this->notRequired($this->params->quotaSetLimitRam()),
-                'securityGroupRules'       => $this->notRequired($this->params->quotaSetLimitSecurityGroupRules()),
-                'securityGroups'           => $this->notRequired($this->params->quotaSetLimitSecurityGroups()),
-                'serverGroups'             => $this->notRequired($this->params->quotaSetLimitServerGroups()),
-                'serverGroupMembers'       => $this->notRequired($this->params->quotaSetLimitServerGroupMembers()),
-            ],
-        ];
+        return ['method' => 'PUT', 'path' => 'os-quota-sets/{tenantId}', 'jsonKey' => 'quota_set', 'params' => ['tenantId' => $this->params->idPath(), 'force' => $this->notRequired($this->params->quotaSetLimitForce()), 'instances' => $this->notRequired($this->params->quotaSetLimitInstances()), 'cores' => $this->notRequired($this->params->quotaSetLimitCores()), 'fixedIps' => $this->notRequired($this->params->quotaSetLimitFixedIps()), 'floatingIps' => $this->notRequired($this->params->quotaSetLimitFloatingIps()), 'injectedFileContentBytes' => $this->notRequired($this->params->quotaSetLimitInjectedFileContentBytes()), 'injectedFilePathBytes' => $this->notRequired($this->params->quotaSetLimitInjectedFilePathBytes()), 'injectedFiles' => $this->notRequired($this->params->quotaSetLimitInjectedFiles()), 'keyPairs' => $this->notRequired($this->params->quotaSetLimitKeyPairs()), 'metadataItems' => $this->notRequired($this->params->quotaSetLimitMetadataItems()), 'ram' => $this->notRequired($this->params->quotaSetLimitRam()), 'securityGroupRules' => $this->notRequired($this->params->quotaSetLimitSecurityGroupRules()), 'securityGroups' => $this->notRequired($this->params->quotaSetLimitSecurityGroups()), 'serverGroups' => $this->notRequired($this->params->quotaSetLimitServerGroups()), 'serverGroupMembers' => $this->notRequired($this->params->quotaSetLimitServerGroupMembers())]];
     }
 }

@@ -1,11 +1,8 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common\Api;
 
 use OpenStack\Common\HydratorStrategyTrait;
-
 /**
  * Represents an individual request parameter in a RESTful operation. A parameter can take on many forms:
  * in a URL path, in a URL query, in a JSON body, and in a HTTP header. It is worth documenting brifly each
@@ -34,16 +31,13 @@ use OpenStack\Common\HydratorStrategyTrait;
 class Parameter
 {
     use HydratorStrategyTrait;
-
     const DEFAULT_LOCATION = 'json';
-
     /**
      * The human-friendly name of the parameter. This is what the user will input.
      *
      * @var string
      */
     private $name = '';
-
     /**
      * The alias for this parameter. Although the user will always interact with the human-friendly $name property,
      * the $sentAs is what's used over the wire.
@@ -51,7 +45,6 @@ class Parameter
      * @var string
      */
     private $sentAs = '';
-
     /**
      * For array parameters (for example, an array of security group names when creating a server), each array element
      * will need to adhere to a common schema. For the aforementioned example, each element will need to be a string.
@@ -60,7 +53,6 @@ class Parameter
      * @var Parameter
      */
     private $itemSchema;
-
     /**
      * For object parameters, each property will need to adhere to a specific schema. For every property in the
      * object, it has its own schema - meaning that this property is a hash of name/schema pairs.
@@ -73,21 +65,18 @@ class Parameter
      * @var []Parameter|Parameter
      */
     private $properties;
-
     /**
      * The value's PHP type which this parameter represents; either "string", "bool", "object", "array", "NULL".
      *
      * @var string
      */
     private $type = '';
-
     /**
      * Indicates whether this parameter requires a value from the user.
      *
      * @var bool
      */
     private $required;
-
     /**
      * The location in the HTTP request where this parameter will populate; either "header", "url", "query", "raw" or
      * "json".
@@ -95,7 +84,6 @@ class Parameter
      * @var string
      */
     private $location = '';
-
     /**
      * Relevant to "json" location parameters only. This property allows for deep nesting through the use of
      * {@see OpenStack\Common\JsonPath}.
@@ -103,51 +91,42 @@ class Parameter
      * @var string
      */
     private $path = '';
-
     /**
      * Allows for the prefixing of parameter names.
      *
      * @var string
      */
     private $prefix = '';
-
     /**
      * The enum values for which this param is restricted.
      *
      * @var array
      */
     private $enum;
-
     /**
      * @param array $data
      */
     public function __construct(array $data)
     {
         $this->hydrate($data);
-
         $this->required = (bool) $this->required;
-
         $this->stockLocation($data);
         $this->stockItemSchema($data);
         $this->stockProperties($data);
     }
-
     private function stockLocation(array $data)
     {
         $this->location = isset($data['location']) ? $data['location'] : self::DEFAULT_LOCATION;
-
         if (!AbstractParams::isSupportedLocation($this->location)) {
             throw new \RuntimeException(sprintf('%s is not a permitted location', $this->location));
         }
     }
-
     private function stockItemSchema(array $data)
     {
         if (isset($data['items'])) {
             $this->itemSchema = new Parameter($data['items']);
         }
     }
-
     private function stockProperties(array $data)
     {
         if (isset($data['properties'])) {
@@ -160,27 +139,24 @@ class Parameter
             }
         }
     }
-
     /**
      * Retrieve the name that will be used over the wire.
      *
      * @return string
      */
-    public function getName(): string
+    public function getName()
     {
         return $this->sentAs ?: $this->name;
     }
-
     /**
      * Indicates whether the user must provide a value for this parameter.
      *
      * @return bool
      */
-    public function isRequired(): bool
+    public function isRequired()
     {
         return true === $this->required;
     }
-
     /**
      * Validates a given user value and checks whether it passes basic sanity checking, such as types.
      *
@@ -190,51 +166,35 @@ class Parameter
      *
      * @throws \Exception If validation fails
      */
-    public function validate($userValues): bool
+    public function validate($userValues)
     {
         $this->validateEnums($userValues);
         $this->validateType($userValues);
-
         if ($this->isArray()) {
             $this->validateArray($userValues);
         } elseif ($this->isObject()) {
             $this->validateObject($userValues);
         }
-
         return true;
     }
-
     private function validateEnums($userValues)
     {
         if (!empty($this->enum) && 'string' == $this->type && !in_array($userValues, $this->enum)) {
-            throw new \Exception(sprintf(
-                'The only permitted values are %s. You provided %s',
-                implode(', ', $this->enum),
-                print_r($userValues, true)
-            ));
+            throw new \Exception(sprintf('The only permitted values are %s. You provided %s', implode(', ', $this->enum), print_r($userValues, true)));
         }
     }
-
     private function validateType($userValues)
     {
         if (!$this->hasCorrectType($userValues)) {
-            throw new \Exception(sprintf(
-                'The key provided "%s" has the wrong value type. You provided %s (%s) but was expecting %s',
-                $this->name,
-                print_r($userValues, true),
-                gettype($userValues),
-                $this->type
-            ));
+            throw new \Exception(sprintf('The key provided "%s" has the wrong value type. You provided %s (%s) but was expecting %s', $this->name, print_r($userValues, true), gettype($userValues), $this->type));
         }
     }
-
     private function validateArray($userValues)
     {
         foreach ($userValues as $userValue) {
             $this->itemSchema->validate($userValue);
         }
     }
-
     private function validateObject($userValues)
     {
         foreach ($userValues as $key => $userValue) {
@@ -242,7 +202,6 @@ class Parameter
             $property->validate($userValue);
         }
     }
-
     /**
      * Internal method which retrieves a nested property for object parameters.
      *
@@ -252,7 +211,7 @@ class Parameter
      *
      * @throws \Exception
      */
-    private function getNestedProperty($key): Parameter
+    private function getNestedProperty($key)
     {
         if ($this->name && false !== stripos($this->name, 'metadata') && $this->properties instanceof Parameter) {
             return $this->properties;
@@ -262,7 +221,6 @@ class Parameter
             throw new \Exception(sprintf('The key provided "%s" is not defined', $key));
         }
     }
-
     /**
      * Internal method which indicates whether the user value is of the same type as the one expected
      * by this parameter.
@@ -271,60 +229,51 @@ class Parameter
      *
      * @return bool
      */
-    private function hasCorrectType($userValue): bool
+    private function hasCorrectType($userValue)
     {
         // Helper fn to see whether an array is associative (i.e. a JSON object)
         $isAssociative = function ($value) {
             return is_array($value) && array_keys($value) !== range(0, count($value) - 1);
         };
-
         // For params defined as objects, we'll let the user get away with
         // passing in an associative array - since it's effectively a hash
         if ('object' == $this->type && $isAssociative($userValue)) {
             return true;
         }
-
         if (class_exists($this->type) || interface_exists($this->type)) {
             return is_a($userValue, $this->type);
         }
-
         if (!$this->type) {
             return true;
         }
-
         // allow string nulls
         if ('string' == $this->type && null === $userValue) {
             return true;
         }
-
         return gettype($userValue) == $this->type;
     }
-
     /**
      * Indicates whether this parameter represents an array type.
      *
      * @return bool
      */
-    public function isArray(): bool
+    public function isArray()
     {
         return 'array' == $this->type && $this->itemSchema instanceof Parameter;
     }
-
     /**
      * Indicates whether this parameter represents an object type.
      *
      * @return bool
      */
-    public function isObject(): bool
+    public function isObject()
     {
         return 'object' == $this->type && !empty($this->properties);
     }
-
-    public function getLocation(): string
+    public function getLocation()
     {
         return $this->location;
     }
-
     /**
      * Verifies whether the given location matches the parameter's location.
      *
@@ -332,21 +281,19 @@ class Parameter
      *
      * @return bool
      */
-    public function hasLocation($value): bool
+    public function hasLocation($value)
     {
         return $this->location == $value;
     }
-
     /**
      * Retrieves the parameter's path.
      *
      * @return string|null
      */
-    public function getPath(): string
+    public function getPath()
     {
         return $this->path;
     }
-
     /**
      * Retrieves the common schema that an array parameter applies to all its child elements.
      *
@@ -356,17 +303,15 @@ class Parameter
     {
         return $this->itemSchema;
     }
-
     /**
      * Sets the name of the parameter to a new value.
      *
      * @param string $name
      */
-    public function setName(string $name)
+    public function setName($name)
     {
         $this->name = $name;
     }
-
     /**
      * Retrieves the child parameter for an object parameter.
      *
@@ -374,29 +319,25 @@ class Parameter
      *
      * @return null|Parameter
      */
-    public function getProperty(string $name)
+    public function getProperty($name)
     {
         if ($this->properties instanceof Parameter) {
             $this->properties->setName($name);
-
             return $this->properties;
         }
-
         return isset($this->properties[$name]) ? $this->properties[$name] : null;
     }
-
     /**
      * Retrieves the prefix for a parameter, if any.
      *
      * @return string|null
      */
-    public function getPrefix(): string
+    public function getPrefix()
     {
         return $this->prefix;
     }
-
-    public function getPrefixedName(): string
+    public function getPrefixedName()
     {
-        return $this->prefix.$this->getName();
+        return $this->prefix . $this->getName();
     }
 }

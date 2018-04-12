@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Networking\v2\Models;
 
 use OpenStack\Common\Resource\Alias;
@@ -11,7 +9,6 @@ use OpenStack\Common\Resource\OperatorResource;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
 use OpenStack\Networking\v2\Api;
-
 /**
  * Represents a Neutron v2 LoadBalancer Listener.
  *
@@ -23,107 +20,76 @@ class LoadBalancerListener extends OperatorResource implements Creatable, Retrie
      * @var string
      */
     public $name;
-
     /**
      * @var string
      */
     public $description;
-
     /**
      * @var string
      */
     public $id;
-
     /**
      * @var string
      */
     public $tenantId;
-
     /**
      * @var string
      */
     public $protocol;
-
     /**
      * @var int
      */
     public $protocolPort;
-
     /**
      * @var int
      */
     public $connectionLimit;
-
     /**
      * @var string
      */
     public $defaultPoolId;
-
     /**
      * @var bool
      */
     public $adminStateUp;
-
     /**
      * @var LoadBalancer[]
      */
     public $loadbalancers;
-
     /**
      * @var string
      */
     public $loadbalancerId;
-
     /**
      * @var string
      */
     public $operatingStatus;
-
     /**
      * @var string
      */
     public $provisioningStatus;
-
     /**
      * @var LoadBalancerPool[]
      */
     public $pools;
-
     protected $resourcesKey = 'listeners';
-    protected $resourceKey  = 'listener';
-
-    protected $aliases = [
-        'tenant_id'           => 'tenantId',
-        'admin_state_up'      => 'adminStateUp',
-        'protocol_port'       => 'protocolPort',
-        'connection_limit'    => 'connectionLimit',
-        'default_pool_id'     => 'defaultPoolId',
-        'loadbalancer_id'     => 'loadbalancerId',
-        'operating_status'    => 'operatingStatus',
-        'provisioning_status' => 'provisioningStatus',
-    ];
-
+    protected $resourceKey = 'listener';
+    protected $aliases = ['tenant_id' => 'tenantId', 'admin_state_up' => 'adminStateUp', 'protocol_port' => 'protocolPort', 'connection_limit' => 'connectionLimit', 'default_pool_id' => 'defaultPoolId', 'loadbalancer_id' => 'loadbalancerId', 'operating_status' => 'operatingStatus', 'provisioning_status' => 'provisioningStatus'];
     /**
      * {@inheritdoc}
      */
-    protected function getAliases(): array
+    protected function getAliases()
     {
-        return parent::getAliases() + [
-            'pools'         => new Alias('pools', LoadBalancerPool::class, true),
-            'loadbalancers' => new Alias('loadbalancers', LoadBalancerPool::class, true),
-        ];
+        return parent::getAliases() + ['pools' => new Alias('pools', LoadBalancerPool::class, true), 'loadbalancers' => new Alias('loadbalancers', LoadBalancerPool::class, true)];
     }
-
     /**
      * {@inheritdoc}
      */
-    public function create(array $userOptions): Creatable
+    public function create(array $userOptions)
     {
         $response = $this->execute($this->api->postLoadBalancerListener(), $userOptions);
-
         return $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -132,7 +98,6 @@ class LoadBalancerListener extends OperatorResource implements Creatable, Retrie
         $response = $this->execute($this->api->getLoadBalancerListener(), ['id' => (string) $this->id]);
         $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -141,7 +106,6 @@ class LoadBalancerListener extends OperatorResource implements Creatable, Retrie
         $response = $this->executeWithState($this->api->putLoadBalancerListener());
         $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */

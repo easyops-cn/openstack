@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Compute\v2\Models;
 
 use OpenStack\Common\Resource\OperatorResource;
 use OpenStack\Common\Resource\Listable;
-
 /**
  * Represents a Compute v2 AvailabilityZone.
  *
@@ -16,18 +13,11 @@ class AvailabilityZone extends OperatorResource implements Listable
 {
     /** @var string */
     public $name;
-
     /** @var string */
     public $state;
-
     /** @var array */
     public $hosts;
-
-    protected $resourceKey  = 'availabilityZoneInfo';
+    protected $resourceKey = 'availabilityZoneInfo';
     protected $resourcesKey = 'availabilityZoneInfo';
-
-    protected $aliases = [
-      'zoneName'  => 'name',
-      'zoneState' => 'state',
-    ];
+    protected $aliases = ['zoneName' => 'name', 'zoneState' => 'state'];
 }

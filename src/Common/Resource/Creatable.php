@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common\Resource;
 
 /**
@@ -16,5 +14,5 @@ interface Creatable
      *
      * @return self
      */
-    public function create(array $userOptions): Creatable;
+    public function create(array $userOptions);
 }

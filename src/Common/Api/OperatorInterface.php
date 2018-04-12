@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common\Api;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Promise\PromiseInterface;
 use OpenStack\Common\Resource\ResourceInterface;
 use Psr\Http\Message\ResponseInterface;
-
 /**
  * An operator is any resource or service that can invoke and send REST operations. In other words, it
  * is any class that can send requests and receive responses with a HTTP client. To do this
@@ -22,7 +19,6 @@ interface OperatorInterface
      * @param ApiInterface    $api    The data API class that dictates how REST operations are structured
      */
     public function __construct(ClientInterface $client, ApiInterface $api);
-
     /**
      * A convenience method that assembles an operation and sends it to the remote API.
      *
@@ -31,8 +27,7 @@ interface OperatorInterface
      *
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function execute(array $definition, array $userValues = []): ResponseInterface;
-
+    public function execute(array $definition, array $userValues = []);
     /**
      * A convenience method that assembles an operation and asynchronously sends it to the remote API.
      *
@@ -41,8 +36,7 @@ interface OperatorInterface
      *
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function executeAsync(array $definition, array $userValues = []): PromiseInterface;
-
+    public function executeAsync(array $definition, array $userValues = []);
     /**
      * Retrieves a populated Operation according to the definition and values provided. A
      * HTTP client is also injected into the object to allow it to communicate with the remote API.
@@ -51,8 +45,7 @@ interface OperatorInterface
      *
      * @return Operation
      */
-    public function getOperation(array $definition): Operation;
-
+    public function getOperation(array $definition);
     /**
      * @param string $class the name of the model class
      * @param mixed  $data  either a {@see ResponseInterface} or data array that will populate the newly
@@ -60,5 +53,5 @@ interface OperatorInterface
      *
      * @return \OpenStack\Common\Resource\ResourceInterface
      */
-    public function model(string $class, $data = null): ResourceInterface;
+    public function model($class, $data = null);
 }

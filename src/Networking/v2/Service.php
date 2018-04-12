@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Networking\v2;
 
 use OpenStack\Common\Service\AbstractService;
@@ -15,7 +13,6 @@ use OpenStack\Networking\v2\Models\Pool;
 use OpenStack\Networking\v2\Models\Port;
 use OpenStack\Networking\v2\Models\Quota;
 use OpenStack\Networking\v2\Models\Subnet;
-
 /**
  * Network v2 service for OpenStack.
  *
@@ -30,11 +27,10 @@ class Service extends AbstractService
      *
      * @return Network
      */
-    public function createNetwork(array $options): Network
+    public function createNetwork(array $options)
     {
         return $this->model(Network::class)->create($options);
     }
-
     /**
      * Create a new network resources.
      *
@@ -42,11 +38,10 @@ class Service extends AbstractService
      *
      * @return array
      */
-    public function createNetworks(array $options): array
+    public function createNetworks(array $options)
     {
         return $this->model(Network::class)->bulkCreate($options);
     }
-
     /**
      * Retrieve a network object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -56,11 +51,10 @@ class Service extends AbstractService
      *
      * @return Network
      */
-    public function getNetwork(string $id): Network
+    public function getNetwork($id)
     {
         return $this->model(Network::class, ['id' => $id]);
     }
-
     /**
      * List networks.
      *
@@ -68,11 +62,10 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listNetworks(array $options = []): \Generator
+    public function listNetworks(array $options = [])
     {
         return $this->model(Network::class)->enumerate($this->api->getNetworks(), $options);
     }
-
     /**
      * Create a new subnet resource.
      *
@@ -80,11 +73,10 @@ class Service extends AbstractService
      *
      * @return Subnet
      */
-    public function createSubnet(array $options): Subnet
+    public function createSubnet(array $options)
     {
         return $this->model(Subnet::class)->create($options);
     }
-
     /**
      * Create a new subnet resources.
      *
@@ -92,11 +84,10 @@ class Service extends AbstractService
      *
      * @return []Subnet
      */
-    public function createSubnets(array $options): array
+    public function createSubnets(array $options)
     {
         return $this->model(Subnet::class)->bulkCreate($options);
     }
-
     /**
      * Retrieve a subnet object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -106,11 +97,10 @@ class Service extends AbstractService
      *
      * @return Subnet
      */
-    public function getSubnet(string $id): Subnet
+    public function getSubnet($id)
     {
         return $this->model(Subnet::class, ['id' => $id]);
     }
-
     /**
      * List subnets.
      *
@@ -118,11 +108,10 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listSubnets(array $options = []): \Generator
+    public function listSubnets(array $options = [])
     {
         return $this->model(Subnet::class)->enumerate($this->api->getSubnets(), $options);
     }
-
     /**
      * Create a new port resource.
      *
@@ -130,11 +119,10 @@ class Service extends AbstractService
      *
      * @return Port
      */
-    public function createPort(array $options): Port
+    public function createPort(array $options)
     {
         return $this->model(Port::class)->create($options);
     }
-
     /**
      * Create new port resources.
      *
@@ -142,11 +130,10 @@ class Service extends AbstractService
      *
      * @return []Port
      */
-    public function createPorts(array $options): array
+    public function createPorts(array $options)
     {
         return $this->model(Port::class)->bulkCreate($options);
     }
-
     /**
      * Retrieve a subnet object without calling the remote API. Any values provided in the array will populate the
      * empty object, allowing you greater control without the expense of network transactions. To call the remote API
@@ -156,11 +143,10 @@ class Service extends AbstractService
      *
      * @return Port
      */
-    public function getPort(string $id): Port
+    public function getPort($id)
     {
         return $this->model(Port::class, ['id' => $id]);
     }
-
     /**
      * List ports.
      *
@@ -168,21 +154,19 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listPorts(array $options = []): \Generator
+    public function listPorts(array $options = [])
     {
         return $this->model(Port::class)->enumerate($this->api->getPorts(), $options);
     }
-
     /**
      * Lists quotas for projects with non-default quota values.
      *
      * @return \Generator
      */
-    public function listQuotas(): \Generator
+    public function listQuotas()
     {
         return $this->model(Quota::class)->enumerate($this->api->getQuotas(), []);
     }
-
     /**
      * Lists quotas for a project.
      *
@@ -194,11 +178,10 @@ class Service extends AbstractService
      *
      * @return Quota
      */
-    public function getQuota(string $tenantId): Quota
+    public function getQuota($tenantId)
     {
         return $this->model(Quota::class, ['tenantId' => $tenantId]);
     }
-
     /**
      * Lists default quotas for a project.
      *
@@ -206,24 +189,21 @@ class Service extends AbstractService
      *
      * @return Quota
      */
-    public function getDefaultQuota(string $tenantId): Quota
+    public function getDefaultQuota($tenantId)
     {
         $quota = $this->model(Quota::class, ['tenantId' => $tenantId]);
         $quota->populateFromResponse($this->execute($this->api->getQuotaDefault(), ['tenantId' => $tenantId]));
-
         return $quota;
     }
-
     /**
      * Lists loadbalancers for projects.
      *
      * @return \Generator
      */
-    public function listLoadBalancers(): \Generator
+    public function listLoadBalancers()
     {
         return $this->model(LoadBalancer::class)->enumerate($this->api->getLoadBalancers());
     }
-
     /**
      * Retrieve an instance of a LoadBalancer object.
      *
@@ -231,11 +211,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancer
      */
-    public function getLoadBalancer(string $id): LoadBalancer
+    public function getLoadBalancer($id)
     {
         return $this->model(LoadBalancer::class, ['id' => $id]);
     }
-
     /**
      * Create a new loadbalancer resource.
      *
@@ -243,21 +222,19 @@ class Service extends AbstractService
      *
      * @return LoadBalancer
      */
-    public function createLoadBalancer(array $options): LoadBalancer
+    public function createLoadBalancer(array $options)
     {
         return $this->model(LoadBalancer::class)->create($options);
     }
-
     /**
      * Lists loadbalancer listeners.
      *
      * @return \Generator
      */
-    public function listLoadBalancerListeners(): \Generator
+    public function listLoadBalancerListeners()
     {
         return $this->model(LoadBalancerListener::class)->enumerate($this->api->getLoadBalancerListeners());
     }
-
     /**
      * Retrieve an instance of a loadbalancer listener object.
      *
@@ -265,11 +242,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancerListener
      */
-    public function getLoadBalancerListener(string $id): LoadBalancerListener
+    public function getLoadBalancerListener($id)
     {
         return $this->model(LoadBalancerListener::class, ['id' => $id]);
     }
-
     /**
      * Create a new loadbalancer Listener resource.
      *
@@ -277,21 +253,19 @@ class Service extends AbstractService
      *
      * @return LoadBalancerListener
      */
-    public function createLoadBalancerListener(array $options): LoadBalancerListener
+    public function createLoadBalancerListener(array $options)
     {
         return $this->model(LoadBalancerListener::class)->create($options);
     }
-
     /**
      * Lists loadbalancer pools.
      *
      * @return \Generator
      */
-    public function listLoadBalancerPools(): \Generator
+    public function listLoadBalancerPools()
     {
         return $this->model(LoadBalancerPool::class)->enumerate($this->api->getLoadBalancerPools());
     }
-
     /**
      * Retrieve an instance of a loadbalancer Pool object.
      *
@@ -299,11 +273,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancerPool
      */
-    public function getLoadBalancerPool(string $id): LoadBalancerPool
+    public function getLoadBalancerPool($id)
     {
         return $this->model(LoadBalancerPool::class, ['id' => $id]);
     }
-
     /**
      * Create a new loadbalancer Pool resource.
      *
@@ -311,11 +284,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancerPool
      */
-    public function createLoadBalancerPool(array $options): LoadBalancerPool
+    public function createLoadBalancerPool(array $options)
     {
         return $this->model(LoadBalancerPool::class)->create($options);
     }
-
     /**
      * Lists loadbalancer members.
      *
@@ -323,11 +295,10 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listLoadBalancerMembers(string $poolId): \Generator
+    public function listLoadBalancerMembers($poolId)
     {
         return $this->model(LoadBalancerPool::class, ['poolId' => $poolId])->enumerate($this->api->getLoadBalancerMembers());
     }
-
     /**
      * Retrieve an instance of a loadbalancer Member object.
      *
@@ -336,11 +307,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancerMember
      */
-    public function getLoadBalancerMember(string $poolId, string $memberId): LoadBalancerMember
+    public function getLoadBalancerMember($poolId, $memberId)
     {
         return $this->model(LoadBalancerMember::class, ['poolId' => $poolId, 'id' => $memberId]);
     }
-
     /**
      * Create a new loadbalancer member resource.
      *
@@ -348,21 +318,19 @@ class Service extends AbstractService
      *
      * @return LoadBalancerMember
      */
-    public function createLoadBalancerMember(array $options): LoadBalancerMember
+    public function createLoadBalancerMember(array $options)
     {
         return $this->model(LoadBalancerMember::class)->create($options);
     }
-
     /**
      * Lists loadbalancer healthmonitors.
      *
      * @return \Generator
      */
-    public function listLoadBalancerHealthMonitors(): \Generator
+    public function listLoadBalancerHealthMonitors()
     {
         return $this->model(LoadBalancerHealthMonitor::class)->enumerate($this->api->getLoadBalancerHealthMonitors());
     }
-
     /**
      * Retrieve an instance of a loadbalancer healthmonitor object.
      *
@@ -370,11 +338,10 @@ class Service extends AbstractService
      *
      * @return LoadBalancerHealthMonitor
      */
-    public function getLoadBalancerHealthMonitor(string $id): LoadBalancerHealthMonitor
+    public function getLoadBalancerHealthMonitor($id)
     {
         return $this->model(LoadBalancerHealthMonitor::class, ['id' => $id]);
     }
-
     /**
      * Create a new loadbalancer healthmonitor resource.
      *
@@ -382,7 +349,7 @@ class Service extends AbstractService
      *
      * @return LoadBalancerHealthMonitor
      */
-    public function createLoadBalancerHealthMonitor(array $options): LoadBalancerHealthMonitor
+    public function createLoadBalancerHealthMonitor(array $options)
     {
         return $this->model(LoadBalancerHealthMonitor::class)->create($options);
     }

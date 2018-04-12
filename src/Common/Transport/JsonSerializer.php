@@ -1,12 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common\Transport;
 
 use OpenStack\Common\Api\Parameter;
 use OpenStack\Common\JsonPath;
-
 /**
  * Class responsible for populating the JSON body of a {@see GuzzleHttp\Message\Request} object.
  */
@@ -22,7 +19,7 @@ class JsonSerializer
      *
      * @return array|mixed
      */
-    private function stockValue(Parameter $param, $userValue, array $json): array
+    private function stockValue(Parameter $param, $userValue, array $json)
     {
         $name = $param->getName();
         if ($path = $param->getPath()) {
@@ -34,10 +31,8 @@ class JsonSerializer
         } else {
             $json[] = $userValue;
         }
-
         return $json;
     }
-
     /**
      * Populates a value into an array-like structure.
      *
@@ -46,16 +41,14 @@ class JsonSerializer
      *
      * @return array|mixed
      */
-    private function stockArrayJson(Parameter $param, array $userValue): array
+    private function stockArrayJson(Parameter $param, array $userValue)
     {
         $elems = [];
         foreach ($userValue as $item) {
             $elems = $this->stockJson($param->getItemSchema(), $item, $elems);
         }
-
         return $elems;
     }
-
     /**
      * Populates a value into an object-like structure.
      *
@@ -64,16 +57,14 @@ class JsonSerializer
      *
      * @return array
      */
-    private function stockObjectJson(Parameter $param, \stdClass $userValue): array
+    private function stockObjectJson(Parameter $param, \stdClass $userValue)
     {
         $object = [];
         foreach ($userValue as $key => $val) {
             $object = $this->stockJson($param->getProperty($key), $val, $object);
         }
-
         return $object;
     }
-
     /**
      * A generic method that will populate a JSON structure with a value according to a schema. It
      * supports multiple types and will delegate accordingly.
@@ -84,7 +75,7 @@ class JsonSerializer
      *
      * @return array
      */
-    public function stockJson(Parameter $param, $userValue, array $json): array
+    public function stockJson(Parameter $param, $userValue, array $json)
     {
         if ($param->isArray()) {
             $userValue = $this->stockArrayJson($param, $userValue);
@@ -94,21 +85,15 @@ class JsonSerializer
         // Populate the final value
         return $this->stockValue($param, $userValue, $json);
     }
-
     private function serializeObjectValue($value)
     {
         if (is_object($value)) {
             if ($value instanceof Serializable) {
                 $value = $value->serialize();
-            } elseif (!($value instanceof \stdClass)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'When an object value is provided, it must either be \stdClass or implement the Serializable '
-                    .'interface, you provided %s',
-                    print_r($value, true)
-                ));
+            } elseif (!$value instanceof \stdClass) {
+                throw new \InvalidArgumentException(sprintf('When an object value is provided, it must either be \\stdClass or implement the Serializable ' . 'interface, you provided %s', print_r($value, true)));
             }
         }
-
         return (object) $value;
     }
 }

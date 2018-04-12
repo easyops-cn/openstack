@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Identity\v3;
 
 use GuzzleHttp\ClientInterface;
 use OpenStack\Common\Auth\IdentityService;
 use OpenStack\Common\Error\BadResponseError;
 use OpenStack\Common\Service\AbstractService;
-
 /**
  * Represents the Keystone v3 service.
  *
@@ -16,11 +13,10 @@ use OpenStack\Common\Service\AbstractService;
  */
 class Service extends AbstractService implements IdentityService
 {
-    public static function factory(ClientInterface $client): self
+    public static function factory(ClientInterface $client)
     {
         return new static($client, new Api());
     }
-
     /**
      * Authenticates credentials, giving back a token and a base URL for the service.
      *
@@ -28,38 +24,26 @@ class Service extends AbstractService implements IdentityService
      *
      * @return array Returns a {@see Models\Token} as the first element, a string base URL as the second
      */
-    public function authenticate(array $options): array
+    public function authenticate(array $options)
     {
         $authOptions = array_intersect_key($options, $this->api->postTokens()['params']);
-
         if (!empty($options['cachedToken'])) {
             $token = $this->generateTokenFromCache($options['cachedToken']);
-
             if ($token->hasExpired()) {
                 throw new \RuntimeException(sprintf('Cached token has expired on "%s".', $token->expires->format(\DateTime::ISO8601)));
             }
         } else {
             $token = $this->generateToken($authOptions);
         }
-
-        $name      = $options['catalogName'];
-        $type      = $options['catalogType'];
-        $region    = $options['region'];
+        $name = $options['catalogName'];
+        $type = $options['catalogType'];
+        $region = $options['region'];
         $interface = isset($options['interface']) ? $options['interface'] : Enum::INTERFACE_PUBLIC;
-
         if ($baseUrl = $token->catalog->getServiceUrl($name, $type, $region, $interface)) {
             return [$token, $baseUrl];
         }
-
-        throw new \RuntimeException(sprintf(
-            'No service found with type [%s] name [%s] region [%s] interface [%s]',
-            $type,
-            $name,
-            $region,
-            $interface
-        ));
+        throw new \RuntimeException(sprintf('No service found with type [%s] name [%s] region [%s] interface [%s]', $type, $name, $region, $interface));
     }
-
     /**
      * Generates authentication token from cached token using `$token->export()`.
      *
@@ -67,11 +51,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Token
      */
-    public function generateTokenFromCache(array $cachedToken): Models\Token
+    public function generateTokenFromCache(array $cachedToken)
     {
         return $this->model(Models\Token::class)->populateFromArray($cachedToken);
     }
-
     /**
      * Generates a new authentication token.
      *
@@ -79,11 +62,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Token
      */
-    public function generateToken(array $options): Models\Token
+    public function generateToken(array $options)
     {
         return $this->model(Models\Token::class)->create($options);
     }
-
     /**
      * Retrieves a token object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -92,11 +74,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Token
      */
-    public function getToken(string $id): Models\Token
+    public function getToken($id)
     {
         return $this->model(Models\Token::class, ['id' => $id]);
     }
-
     /**
      * Validates a token, identified by its ID, and returns TRUE if its valid, FALSE if not.
      *
@@ -104,28 +85,25 @@ class Service extends AbstractService implements IdentityService
      *
      * @return bool
      */
-    public function validateToken(string $id): bool
+    public function validateToken($id)
     {
         try {
             $this->execute($this->api->headTokens(), ['tokenId' => $id]);
-
             return true;
         } catch (BadResponseError $e) {
             return false;
         }
     }
-
     /**
      * Revokes a token, identified by its ID. After this operation completes, users will not be able to use this token
      * again for authentication.
      *
      * @param string $id The unique ID of the token
      */
-    public function revokeToken(string $id)
+    public function revokeToken($id)
     {
         $this->execute($this->api->deleteTokens(), ['tokenId' => $id]);
     }
-
     /**
      * Creates a new service according to the provided options.
      *
@@ -133,11 +111,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Service
      */
-    public function createService(array $options): Models\Service
+    public function createService(array $options)
     {
         return $this->model(Models\Service::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of service objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -147,11 +124,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listServices(array $options = []): \Generator
+    public function listServices(array $options = [])
     {
         return $this->model(Models\Service::class)->enumerate($this->api->getServices(), $options);
     }
-
     /**
      * Retrieves a service object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -160,11 +136,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Service
      */
-    public function getService(string $id): Models\Service
+    public function getService($id)
     {
         return $this->model(Models\Service::class, ['id' => $id]);
     }
-
     /**
      * Creates a new endpoint according to the provided options.
      *
@@ -172,11 +147,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Endpoint
      */
-    public function createEndpoint(array $options): Models\Endpoint
+    public function createEndpoint(array $options)
     {
         return $this->model(Models\Endpoint::class)->create($options);
     }
-
     /**
      * Retrieves an endpoint object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -185,11 +159,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Endpoint
      */
-    public function getEndpoint(string $id): Models\Endpoint
+    public function getEndpoint($id)
     {
         return $this->model(Models\Endpoint::class, ['id' => $id]);
     }
-
     /**
      * Returns a generator which will yield a collection of endpoint objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -199,11 +172,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listEndpoints(array $options = []): \Generator
+    public function listEndpoints(array $options = [])
     {
         return $this->model(Models\Endpoint::class)->enumerate($this->api->getEndpoints(), $options);
     }
-
     /**
      * Creates a new domain according to the provided options.
      *
@@ -211,11 +183,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Domain
      */
-    public function createDomain(array $options): Models\Domain
+    public function createDomain(array $options)
     {
         return $this->model(Models\Domain::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of domain objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -225,11 +196,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listDomains(array $options = []): \Generator
+    public function listDomains(array $options = [])
     {
         return $this->model(Models\Domain::class)->enumerate($this->api->getDomains(), $options);
     }
-
     /**
      * Retrieves a domain object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -238,11 +208,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Domain
      */
-    public function getDomain(string $id): Models\Domain
+    public function getDomain($id)
     {
         return $this->model(Models\Domain::class, ['id' => $id]);
     }
-
     /**
      * Creates a new project according to the provided options.
      *
@@ -250,11 +219,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Project
      */
-    public function createProject(array $options): Models\Project
+    public function createProject(array $options)
     {
         return $this->model(Models\Project::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of project objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -264,11 +232,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listProjects(array $options = []): \Generator
+    public function listProjects(array $options = [])
     {
         return $this->model(Models\Project::class)->enumerate($this->api->getProjects(), $options);
     }
-
     /**
      * Retrieves a project object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -277,11 +244,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Project
      */
-    public function getProject(string $id): Models\Project
+    public function getProject($id)
     {
         return $this->model(Models\Project::class, ['id' => $id]);
     }
-
     /**
      * Creates a new user according to the provided options.
      *
@@ -289,11 +255,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\User
      */
-    public function createUser(array $options): Models\User
+    public function createUser(array $options)
     {
         return $this->model(Models\User::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of user objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -303,11 +268,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listUsers(array $options = []): \Generator
+    public function listUsers(array $options = [])
     {
         return $this->model(Models\User::class)->enumerate($this->api->getUsers(), $options);
     }
-
     /**
      * Retrieves a user object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -316,11 +280,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\User
      */
-    public function getUser(string $id): Models\User
+    public function getUser($id)
     {
         return $this->model(Models\User::class, ['id' => $id]);
     }
-
     /**
      * Creates a new group according to the provided options.
      *
@@ -328,11 +291,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Group
      */
-    public function createGroup(array $options): Models\Group
+    public function createGroup(array $options)
     {
         return $this->model(Models\Group::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of group objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -342,11 +304,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listGroups(array $options = []): \Generator
+    public function listGroups(array $options = [])
     {
         return $this->model(Models\Group::class)->enumerate($this->api->getGroups(), $options);
     }
-
     /**
      * Retrieves a group object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -355,11 +316,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Group
      */
-    public function getGroup($id): Models\Group
+    public function getGroup($id)
     {
         return $this->model(Models\Group::class, ['id' => $id]);
     }
-
     /**
      * Creates a new credential according to the provided options.
      *
@@ -367,11 +327,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Credential
      */
-    public function createCredential(array $options): Models\Credential
+    public function createCredential(array $options)
     {
         return $this->model(Models\Credential::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of credential objects. The elements which generators yield can
      * be accessed using a foreach loop. Often the API will not return the full state of the resource in collections;
@@ -379,11 +338,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listCredentials(): \Generator
+    public function listCredentials()
     {
         return $this->model(Models\Credential::class)->enumerate($this->api->getCredentials());
     }
-
     /**
      * Retrieves a credential object and populates its unique identifier object. This operation will not perform a GET
      * or HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -392,11 +350,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Credential
      */
-    public function getCredential(string $id): Models\Credential
+    public function getCredential($id)
     {
         return $this->model(Models\Credential::class, ['id' => $id]);
     }
-
     /**
      * Creates a new role according to the provided options.
      *
@@ -404,11 +361,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Role
      */
-    public function createRole(array $options): Models\Role
+    public function createRole(array $options)
     {
         return $this->model(Models\Role::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of role objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -418,11 +374,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listRoles(array $options = []): \Generator
+    public function listRoles(array $options = [])
     {
         return $this->model(Models\Role::class)->enumerate($this->api->getRoles(), $options);
     }
-
     /**
      * Returns a generator which will yield a collection of role assignment objects. The elements which generators
      * yield can be accessed using a foreach loop. Often the API will not return the full state of the resource in
@@ -432,11 +387,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listRoleAssignments(array $options = []): \Generator
+    public function listRoleAssignments(array $options = [])
     {
         return $this->model(Models\Assignment::class)->enumerate($this->api->getRoleAssignments(), $options);
     }
-
     /**
      * Creates a new policy according to the provided options.
      *
@@ -444,11 +398,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Policy
      */
-    public function createPolicy(array $options): Models\Policy
+    public function createPolicy(array $options)
     {
         return $this->model(Models\Policy::class)->create($options);
     }
-
     /**
      * Returns a generator which will yield a collection of policy objects. The elements which generators yield can be
      * accessed using a foreach loop. Often the API will not return the full state of the resource in collections; you
@@ -458,11 +411,10 @@ class Service extends AbstractService implements IdentityService
      *
      * @return \Generator
      */
-    public function listPolicies(array $options = []): \Generator
+    public function listPolicies(array $options = [])
     {
         return $this->model(Models\Policy::class)->enumerate($this->api->getPolicies(), $options);
     }
-
     /**
      * Retrieves a policy object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -471,7 +423,7 @@ class Service extends AbstractService implements IdentityService
      *
      * @return Models\Policy
      */
-    public function getPolicy(string $id): Models\Policy
+    public function getPolicy($id)
     {
         return $this->model(Models\Policy::class, ['id' => $id]);
     }

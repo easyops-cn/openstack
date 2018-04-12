@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common\Api;
 
 /**
@@ -17,16 +15,12 @@ class Operation
 {
     /** @var string The HTTP method */
     private $method;
-
     /** @var string The URL path */
     private $path;
-
     /** @var string The top-level JSON key */
     private $jsonKey;
-
     /** @var []Parameter The parameters of this operation */
     private $params;
-
     /**
      * @param array $definition The data definition (in array form) that will populate this
      *                          operation. Usually this is retrieved from an {@see ApiInterface}
@@ -35,31 +29,26 @@ class Operation
     public function __construct(array $definition)
     {
         $this->method = $definition['method'];
-        $this->path   = $definition['path'];
-
+        $this->path = $definition['path'];
         if (isset($definition['jsonKey'])) {
             $this->jsonKey = $definition['jsonKey'];
         }
-
         $this->params = self::toParamArray($definition['params']);
     }
-
     /**
      * @return string
      */
-    public function getPath(): string
+    public function getPath()
     {
         return $this->path;
     }
-
     /**
      * @return string
      */
-    public function getMethod(): string
+    public function getMethod()
     {
         return $this->method;
     }
-
     /**
      * Indicates whether this operation supports a parameter.
      *
@@ -67,29 +56,26 @@ class Operation
      *
      * @return bool
      */
-    public function hasParam(string $key): bool
+    public function hasParam($key)
     {
         return isset($this->params[$key]);
     }
-
     /**
      * @param $name
      *
      * @return Parameter
      */
-    public function getParam(string $name)
+    public function getParam($name)
     {
         return isset($this->params[$name]) ? $this->params[$name] : null;
     }
-
     /**
      * @return string
      */
-    public function getJsonKey(): string
+    public function getJsonKey()
     {
         return $this->jsonKey ?: '';
     }
-
     /**
      * A convenience method that will take a generic array of data and convert it into an array of
      * {@see Parameter} objects.
@@ -98,17 +84,14 @@ class Operation
      *
      * @return array
      */
-    public static function toParamArray(array $data): array
+    public static function toParamArray(array $data)
     {
         $params = [];
-
         foreach ($data as $name => $param) {
             $params[$name] = new Parameter($param + ['name' => $name]);
         }
-
         return $params;
     }
-
     /**
      * This method will validate all of the user-provided values and throw an exception if any
      * failures are detected. This is useful for basic sanity-checking before a request is
@@ -120,7 +103,7 @@ class Operation
      *
      * @throws \Exception If validate fails
      */
-    public function validate(array $userValues): bool
+    public function validate(array $userValues)
     {
         foreach ($this->params as $paramName => $param) {
             if (array_key_exists($paramName, $userValues)) {
@@ -129,7 +112,6 @@ class Operation
                 throw new \Exception(sprintf('"%s" is a required option, but it was not provided', $paramName));
             }
         }
-
         return true;
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common;
 
 /**
@@ -26,7 +24,6 @@ class JsonPath
 {
     /** @var array */
     private $jsonStructure;
-
     /**
      * @param $structure The initial data structure to extract from and insert into. Typically this will be a
      *                   multidimensional associative array; but well-formed JSON strings are also acceptable.
@@ -35,18 +32,16 @@ class JsonPath
     {
         $this->jsonStructure = is_string($structure) ? json_decode($structure, true) : $structure;
     }
-
     /**
      * Set a node in the structure.
      *
      * @param $path  The XPath to use
      * @param $value The new value of the node
      */
-    public function set(string $path, $value)
+    public function set($path, $value)
     {
         $this->jsonStructure = $this->setPath($path, $value, $this->jsonStructure);
     }
-
     /**
      * Internal method for recursive calls.
      *
@@ -56,24 +51,20 @@ class JsonPath
      *
      * @return mixed
      */
-    private function setPath(string $path, $value, array $json): array
+    private function setPath($path, $value, array $json)
     {
         $nodes = explode('.', $path);
         $point = array_shift($nodes);
-
         if (!isset($json[$point])) {
             $json[$point] = [];
         }
-
         if (!empty($nodes)) {
             $json[$point] = $this->setPath(implode('.', $nodes), $value, $json[$point]);
         } else {
             $json[$point] = $value;
         }
-
         return $json;
     }
-
     /**
      * Return the updated structure.
      *
@@ -83,7 +74,6 @@ class JsonPath
     {
         return $this->jsonStructure;
     }
-
     /**
      * Get a path's value. If no path can be matched, NULL is returned.
      *
@@ -91,26 +81,23 @@ class JsonPath
      *
      * @return mixed|null
      */
-    public function get(string $path)
+    public function get($path)
     {
         return $this->getPath($path, $this->jsonStructure);
     }
-
     /**
      * Internal method for recursion.
      *
      * @param $path
      * @param $json
      */
-    private function getPath(string $path, $json)
+    private function getPath($path, $json)
     {
         $nodes = explode('.', $path);
         $point = array_shift($nodes);
-
         if (!isset($json[$point])) {
             return null;
         }
-
         if (empty($nodes)) {
             return $json[$point];
         } else {

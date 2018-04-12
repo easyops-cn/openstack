@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Common;
 
 /**
@@ -15,7 +13,6 @@ trait ArrayAccessTrait
      * @var array
      */
     private $internalState = [];
-
     /**
      * Sets an internal key with a value.
      *
@@ -30,7 +27,6 @@ trait ArrayAccessTrait
             $this->internalState[$offset] = $value;
         }
     }
-
     /**
      * Checks whether an internal key exists.
      *
@@ -38,21 +34,19 @@ trait ArrayAccessTrait
      *
      * @return bool
      */
-    public function offsetExists(string $offset): bool
+    public function offsetExists($offset)
     {
         return isset($this->internalState[$offset]);
     }
-
     /**
      * Unsets an internal key.
      *
      * @param string $offset
      */
-    public function offsetUnset(string $offset)
+    public function offsetUnset($offset)
     {
         unset($this->internalState[$offset]);
     }
-
     /**
      * Retrieves an internal key.
      *
@@ -60,7 +54,7 @@ trait ArrayAccessTrait
      *
      * @return mixed|null
      */
-    public function offsetGet(string $offset)
+    public function offsetGet($offset)
     {
         return $this->offsetExists($offset) ? $this->internalState[$offset] : null;
     }

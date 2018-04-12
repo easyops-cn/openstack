@@ -1,228 +1,118 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\BlockStorage\v2;
 
 use OpenStack\Common\Api\AbstractParams;
-
 class Params extends AbstractParams
 {
-    public function availabilityZone(): array
+    public function availabilityZone()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => 'availability_zone',
-            'description' => 'The availability zone where the entity will reside.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'sentAs' => 'availability_zone', 'description' => 'The availability zone where the entity will reside.'];
     }
-
-    public function sourceVolId(): array
+    public function sourceVolId()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => 'source_volid',
-            'description' => 'To create a volume from an existing volume, specify the ID of the existing volume. The '.
-                'volume is created with the same size as the source volume.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'sentAs' => 'source_volid', 'description' => 'To create a volume from an existing volume, specify the ID of the existing volume. The ' . 'volume is created with the same size as the source volume.'];
     }
-
-    public function desc(): array
+    public function desc()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'description' => 'A human-friendly description that describes the resource',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'description' => 'A human-friendly description that describes the resource'];
     }
-
-    public function snapshotId(): array
+    public function snapshotId()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => 'snapshot_id',
-            'description' => 'To create a volume from an existing snapshot, specify the ID of the existing volume '.
-                'snapshot. The volume is created in same availability zone and with same size as the snapshot.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'sentAs' => 'snapshot_id', 'description' => 'To create a volume from an existing snapshot, specify the ID of the existing volume ' . 'snapshot. The volume is created in same availability zone and with same size as the snapshot.'];
     }
-
-    public function size(): array
+    public function size()
     {
-        return [
-            'type'        => self::INT_TYPE,
-            'location'    => self::JSON,
-            'required'    => true,
-            'description' => 'The size of the volume, in gibibytes (GiB).',
-        ];
+        return ['type' => self::INT_TYPE, 'location' => self::JSON, 'required' => true, 'description' => 'The size of the volume, in gibibytes (GiB).'];
     }
-
-    public function imageRef(): array
+    public function imageRef()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => 'imageRef',
-            'description' => 'The ID of the image from which you want to create the volume. Required to create a '.
-                'bootable volume.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'sentAs' => 'imageRef', 'description' => 'The ID of the image from which you want to create the volume. Required to create a ' . 'bootable volume.'];
     }
-
-    public function volumeType(): array
+    public function volumeType()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => 'volume_type',
-            'description' => 'The associated volume type.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'sentAs' => 'volume_type', 'description' => 'The associated volume type.'];
     }
-
-    public function metadata(): array
+    public function metadata()
     {
-        return [
-            'type'        => self::OBJECT_TYPE,
-            'location'    => self::JSON,
-            'description' => 'One or more metadata key and value pairs to associate with the volume.',
-            'properties'  => [
-                'type'        => self::STRING_TYPE,
-                'description' => <<<TYPEOTHER
+        return ['type' => self::OBJECT_TYPE, 'location' => self::JSON, 'description' => 'One or more metadata key and value pairs to associate with the volume.', 'properties' => ['type' => self::STRING_TYPE, 'description' => <<<TYPEOTHER
 The value being set for your key. Bear in mind that "key" is just an example, you can name it anything.
 TYPEOTHER
-            ],
-        ];
+]];
     }
-
-    public function sort(): array
+    public function sort()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::QUERY,
-            'description' => 'Comma-separated list of sort keys and optional sort directions in the form of '.
-                '<key>[:<direction>]. A valid direction is asc (ascending) or desc (descending).',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::QUERY, 'description' => 'Comma-separated list of sort keys and optional sort directions in the form of ' . '<key>[:<direction>]. A valid direction is asc (ascending) or desc (descending).'];
     }
-
-    public function name(string $resource): array
+    public function name($resource)
     {
-        return parent::name($resource) + [
-            'type'     => self::STRING_TYPE,
-            'location' => self::JSON,
-        ];
+        return parent::name($resource) + ['type' => self::STRING_TYPE, 'location' => self::JSON];
     }
-
-    public function idPath(): array
+    public function idPath()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::URL,
-            'description' => 'The UUID of the resource',
-            'documented'  => false,
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::URL, 'description' => 'The UUID of the resource', 'documented' => false];
     }
-
-    public function typeSpecs(): array
+    public function typeSpecs()
     {
-        return [
-            'type'        => self::OBJECT_TYPE,
-            'location'    => self::JSON,
-            'description' => 'A key and value pair that contains additional specifications that are associated with '.
-                'the volume type. Examples include capabilities, capacity, compression, and so on, depending on the '.
-                'storage driver in use.',
-        ];
+        return ['type' => self::OBJECT_TYPE, 'location' => self::JSON, 'description' => 'A key and value pair that contains additional specifications that are associated with ' . 'the volume type. Examples include capabilities, capacity, compression, and so on, depending on the ' . 'storage driver in use.'];
     }
-
-    public function volId(): array
+    public function volId()
     {
-        return [
-            'type'        => self::STRING_TYPE,
-            'location'    => self::JSON,
-            'required'    => true,
-            'sentAs'      => 'volume_id',
-            'description' => 'To create a snapshot from an existing volume, specify the ID of the existing volume.',
-        ];
+        return ['type' => self::STRING_TYPE, 'location' => self::JSON, 'required' => true, 'sentAs' => 'volume_id', 'description' => 'To create a snapshot from an existing volume, specify the ID of the existing volume.'];
     }
-
-    public function force(): array
+    public function force()
     {
-        return [
-            'type'        => self::BOOL_TYPE,
-            'location'    => self::JSON,
-            'description' => 'Indicate whether to snapshot, even if the volume is attached. Default is false.',
-        ];
+        return ['type' => self::BOOL_TYPE, 'location' => self::JSON, 'description' => 'Indicate whether to snapshot, even if the volume is attached. Default is false.'];
     }
-
-    public function snapshotName(): array
+    public function snapshotName()
     {
-        return parent::name('snapshot') + [
-            'type'     => self::STRING_TYPE,
-            'location' => self::JSON,
-        ];
+        return parent::name('snapshot') + ['type' => self::STRING_TYPE, 'location' => self::JSON];
     }
-
-    protected function quotaSetLimit($sentAs, $description): array
+    protected function quotaSetLimit($sentAs, $description)
     {
-        return [
-            'type'        => self::INT_TYPE,
-            'location'    => self::JSON,
-            'sentAs'      => $sentAs,
-            'description' => $description,
-        ];
+        return ['type' => self::INT_TYPE, 'location' => self::JSON, 'sentAs' => $sentAs, 'description' => $description];
     }
-
-    public function quotaSetLimitInstances(): array
+    public function quotaSetLimitInstances()
     {
         return $this->quotaSetLimit('instances', 'The number of allowed instances for each tenant.');
     }
-
-    public function quotaSetBackupGigabytes(): array
+    public function quotaSetBackupGigabytes()
     {
         return $this->quotaSetLimit('backup_gigabytes', 'Total size of back-up storage (GiB)');
     }
-
-    public function quotaSetBackups(): array
+    public function quotaSetBackups()
     {
         return $this->quotaSetLimit('backups', 'The number of allowed back-ups');
     }
-
-    public function quotaSetGigabytes(): array
+    public function quotaSetGigabytes()
     {
         return $this->quotaSetLimit('gigabytes', 'Total Size of Volumes and Snapshots (GiB)');
     }
-
-    public function quotaSetGigabytesIscsi(): array
+    public function quotaSetGigabytesIscsi()
     {
         return $this->quotaSetLimit('gigabytes_iscsi', 'Total Size of Volumes and Snapshots iscsi (GiB)');
     }
-
-    public function quotaSetTenantId(): array
+    public function quotaSetTenantId()
     {
         return $this->quotaSetLimit('id', 'Tenant Id');
     }
-
-    public function quotaSetPerVolumeGigabytes(): array
+    public function quotaSetPerVolumeGigabytes()
     {
         return $this->quotaSetLimit('per_volume_gigabytes', 'Allowed size per Volume (GiB)');
     }
-
-    public function quotaSetSnapshots(): array
+    public function quotaSetSnapshots()
     {
         return $this->quotaSetLimit('snapshots', 'The number of allowed snapshots');
     }
-
-    public function quotaSetSnapshotsIscsi(): array
+    public function quotaSetSnapshotsIscsi()
     {
         return $this->quotaSetLimit('snapshots_iscsi', 'The number of allowed snapshots iscsi');
     }
-
-    public function quotaSetVolumes(): array
+    public function quotaSetVolumes()
     {
         return $this->quotaSetLimit('volumes', 'The number of allowed volumes');
     }
-
-    public function quotaSetVolumesIscsi(): array
+    public function quotaSetVolumesIscsi()
     {
         return $this->quotaSetLimit('volumes_iscsi', 'The number of allowed volumes iscsi');
     }

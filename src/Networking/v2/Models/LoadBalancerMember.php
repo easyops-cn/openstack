@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Networking\v2\Models;
 
 use OpenStack\Common\Resource\Creatable;
@@ -10,7 +8,6 @@ use OpenStack\Common\Resource\OperatorResource;
 use OpenStack\Common\Resource\Retrievable;
 use OpenStack\Common\Resource\Updateable;
 use OpenStack\Networking\v2\Api;
-
 /**
  * Represents a Neutron v2 LoadBalancer member.
  *
@@ -22,76 +19,54 @@ class LoadBalancerMember extends OperatorResource implements Creatable, Retrieva
      * @var string
      */
     public $id;
-
     /**
      * @var string
      */
     public $tenantId;
-
     /**
      * @var string
      */
     public $address;
-
     /**
      * @var int
      */
     public $protocolPort;
-
     /**
      * @var int
      */
     public $weight;
-
     /**
      * @var string
      */
     public $subnetId;
-
     /**
      * @var string
      */
     public $poolId;
-
     /**
      * @var bool
      */
     public $adminStateUp;
-
     /**
      * @var string
      */
     public $operatingStatus;
-
     /**
      * @var string
      */
     public $provisioningStatus;
-
     protected $resourcesKey = 'members';
-    protected $resourceKey  = 'member';
-
-    protected $aliases = [
-        'tenant_id'           => 'tenantId',
-        'admin_state_up'      => 'adminStateUp',
-        'protocol_port'       => 'protocolPort',
-        'subnet_id'           => 'subnetId',
-        'pool_id'             => 'poolId',
-        'operating_status'    => 'operatingStatus',
-        'provisioning_status' => 'provisioningStatus',
-    ];
-
+    protected $resourceKey = 'member';
+    protected $aliases = ['tenant_id' => 'tenantId', 'admin_state_up' => 'adminStateUp', 'protocol_port' => 'protocolPort', 'subnet_id' => 'subnetId', 'pool_id' => 'poolId', 'operating_status' => 'operatingStatus', 'provisioning_status' => 'provisioningStatus'];
     /**
      * {@inheritdoc}
      */
-    public function create(array $userOptions): Creatable
+    public function create(array $userOptions)
     {
         $userOptions = array_merge(['poolId' => $this->poolId], $userOptions);
-        $response    = $this->execute($this->api->postLoadBalancerMember(), $userOptions);
-
+        $response = $this->execute($this->api->postLoadBalancerMember(), $userOptions);
         return $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -100,7 +75,6 @@ class LoadBalancerMember extends OperatorResource implements Creatable, Retrieva
         $response = $this->execute($this->api->getLoadBalancerMember(), ['poolId' => (string) $this->poolId, 'id' => (string) $this->id]);
         $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -109,7 +83,6 @@ class LoadBalancerMember extends OperatorResource implements Creatable, Retrieva
         $response = $this->executeWithState($this->api->putLoadBalancerMember(), ['poolId' => (string) $this->poolId, 'id' => (string) $this->id]);
         $this->populateFromResponse($response);
     }
-
     /**
      * {@inheritdoc}
      */

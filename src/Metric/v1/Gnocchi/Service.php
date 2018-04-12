@@ -1,14 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
 namespace OpenStack\Metric\v1\Gnocchi;
 
 use OpenStack\Common\Service\AbstractService;
 use OpenStack\Metric\v1\Gnocchi\Models\Metric;
 use OpenStack\Metric\v1\Gnocchi\Models\Resource;
 use OpenStack\Metric\v1\Gnocchi\Models\ResourceType;
-
 /**
  * Gnocci Metric v1 Service class.
  *
@@ -21,11 +18,10 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listResourceTypes(): \Generator
+    public function listResourceTypes()
     {
         return $this->model(ResourceType::class)->enumerate($this->api->getResourceTypes(), []);
     }
-
     /**
      * Retrieves a collection of \OpenStack\Metric\v1\Gnocchi\Models\Resource type in a generator format.
      *
@@ -33,13 +29,11 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listResources(array $options = []): \Generator
+    public function listResources(array $options = [])
     {
         $this->injectGenericType($options);
-
         return $this->model(Resource::class)->enumerate($this->api->getResources(), $options);
     }
-
     /**
      * Retrieves a Resource object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -48,17 +42,14 @@ class Service extends AbstractService
      *
      * @return resource
      */
-    public function getResource(array $options = []): Resource
+    public function getResource(array $options = [])
     {
         $this->injectGenericType($options);
-
         /** @var resource $resource */
         $resource = $this->model(Resource::class);
         $resource->populateFromArray($options);
-
         return $resource;
     }
-
     /**
      * Retrieves a collection of \OpenStack\Metric\v1\Gnocchi\Models\Resource type in a generator format.
      *
@@ -66,10 +57,9 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function searchResources(array $options = []): \Generator
+    public function searchResources(array $options = [])
     {
         $this->injectGenericType($options);
-
         /**
          * $options['criteria'] must send as STRING
          * This will check input $options and perform json_encode if needed.
@@ -77,16 +67,13 @@ class Service extends AbstractService
         if (isset($options['criteria']) && !is_string($options['criteria'])) {
             $options['criteria'] = json_encode($options['criteria']);
         }
-
         /*
          * We need to manually add content-type header to this request
          * since searchResources method sends RAW request body.
          */
         $options['contentType'] = 'application/json';
-
         return $this->model(Resource::class)->enumerate($this->api->searchResources(), $options);
     }
-
     /**
      * Retrieves a Metric object and populates its unique identifier object. This operation will not perform a GET or
      * HEAD request by default; you will need to call retrieve() if you want to pull in remote state from the API.
@@ -95,15 +82,13 @@ class Service extends AbstractService
      *
      * @return Metric
      */
-    public function getMetric(string $id): Metric
+    public function getMetric($id)
     {
         /** @var Metric $metric */
         $metric = $this->model(Metric::class);
         $metric->populateFromArray(['id' => $id]);
-
         return $metric;
     }
-
     /**
      * Retrieves a collection of Metric type in a generator format.
      *
@@ -111,11 +96,10 @@ class Service extends AbstractService
      *
      * @return \Generator
      */
-    public function listMetrics(array $options = []): \Generator
+    public function listMetrics(array $options = [])
     {
         return $this->model(Metric::class)->enumerate($this->api->getMetrics(), $options);
     }
-
     /**
      * If options does not have type, this will inject $options['type'] = 'generic'.
      *
