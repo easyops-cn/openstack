@@ -39,7 +39,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_password_is_missing()
     {
@@ -47,7 +47,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_both_tenantId_and_tenantName_is_missing()
     {
@@ -57,7 +57,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_authUrl_is_missing()
     {
@@ -65,7 +65,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_region_is_missing()
     {
@@ -75,7 +75,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_catalogName_is_missing()
     {
@@ -85,7 +85,7 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @expectedException \Throwable
+     * @expectedException \Exception
      */
     public function test_it_throws_exception_if_catalogType_is_missing()
     {
